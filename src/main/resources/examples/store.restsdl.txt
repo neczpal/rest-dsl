@@ -1,0 +1,20 @@
+// 1. The Service (for the standalone inventory action)
+service Store {
+    path: "/store"
+
+    get inventory() -> Map<String, Int> {
+        path: "/inventory"
+        auth: [ api_key ]
+        responses: 200
+    }
+}
+
+// 2. The Resource (for managing Orders)
+resource Order as crud {
+    path: "/store/order"
+    model: Order
+
+    // The Swagger spec only allows Create, Read, and Delete for orders.
+    // We can explicitly exclude the others from the default CRUD engine.
+    exclude: [ listAll, update ]
+}

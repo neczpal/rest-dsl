@@ -1,0 +1,5 @@
+api Petstore {
+    title: "Swagger Petstore - OpenAPI 3.0"
+    version: "1.0.27"
+    base: "/api/v3"
+}

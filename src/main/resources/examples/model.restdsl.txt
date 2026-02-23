@@ -1,0 +1,47 @@
+enum PetStatus { available, pending, sold }
+enum OrderStatus { placed, approved, delivered }
+
+model Category {
+    id: Int
+    name: String
+}
+
+model Tag {
+    id: Int
+    name: String
+}
+
+model Pet {
+    id: Int
+    name: String (required)
+    category: Category
+    photoUrls: List<String> (required)
+    tags: List<Tag>
+    status: PetStatus
+}
+
+model Order {
+    id: Int
+    petId: Int
+    quantity: Int
+    shipDate: DateTime
+    status: OrderStatus
+    complete: Boolean
+}
+
+model User {
+    id: Int
+    username: String
+    firstName: String
+    lastName: String
+    email: String
+    password: String (writeonly)
+    phone: String
+    userStatus: Int
+}
+
+model ApiResponse {
+    code: Int
+    type: String
+    message: String
+}

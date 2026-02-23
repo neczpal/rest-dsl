@@ -1,0 +1,35 @@
+resource User as crud {
+    path: "/user"
+    model: User
+    identifier: username // Tells CRUD to generate /user/{username} instead of /user/{id}
+
+    // Implicitly generated using 'username' as the path param:
+    // POST /user (create)
+    // GET /user/{username} (getById)
+    // PUT /user/{username} (update)
+    // DELETE /user/{username} (delete)
+
+    // Extra Actions:
+    action createWithList(body: List<User>) -> User {
+        method: POST
+        path: "/createWithList"
+        responses: 200 | default
+    }
+
+    action login(username: String, password: String) -> String {
+        method: GET
+        path: "/login"
+        responses {
+            200 -> {
+                headers: { "X-Rate-Limit": Int, "X-Expires-After": DateTime }
+            }
+            400 -> { desc: "Invalid username/password supplied" }
+        }
+    }
+
+    action logout() -> NoContent {
+        method: GET
+        path: "/logout"
+        responses: 200
+    }
+}

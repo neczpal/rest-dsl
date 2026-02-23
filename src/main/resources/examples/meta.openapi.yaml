@@ -1,0 +1,6 @@
+openapi: 3.0.4
+info:
+  title: Swagger Petstore - OpenAPI 3.0
+  version: 1.0.27
+servers:
+  - url: /api/v3
