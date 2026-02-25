@@ -1,0 +1,11 @@
+api Petstore {
+    title: "Petstore"
+    version: "1.0.27"
+    base: "/api/v3"
+}
+
+model Category {
+    id: Int
+    name: String
+    isBroken: Boolean
+}

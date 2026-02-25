@@ -3,14 +3,30 @@ grammar RestDSL;
 // --- PARSER RULES (The structure of your language, starts with lowercase) ---
 
 // The root of our file
-file: apiDefinition EOF;
+file: definition* EOF;
 
-apiDefinition: 'api' ID '{' properties* '}';
+definition
+    : apiDefinition
+    | modelDefinition
+    ;
 
-properties:
+apiDefinition: 'api' ID '{' apiProperties* '}';
+
+apiProperties:
     'title:' STRING           # TitleProp
     | 'version:' STRING        # VersionProp
     | 'base:' STRING         # BaseProp
+    ;
+
+modelDefinition: 'model' ID '{' field* '}';
+
+field: ID ':' type;
+
+type
+    : 'Int'
+    | 'String'
+    | 'Boolean'
+    | 'Double'
     ;
 
 // --- LEXER RULES (The vocabulary of your language, starts with UPPERCASE) ---
