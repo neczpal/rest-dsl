@@ -4,8 +4,109 @@ api Petstore {
     base: "/api/v3"
 }
 
+service Pet {
+    base: "/pet"
+
+    post addPet {
+        body: Pet
+        responses: {
+            200: Pet
+            405: "Invalid input"
+        }
+    }
+
+    put updatePet {
+        body: Pet
+        responses: {
+            200: Pet
+            400: "Invalid ID supplied"
+            404: "Pet not found"
+        }
+    }
+
+    post updatePetWithForm {
+        path: "/{petId}"
+        pathParams: {
+            petId: Int
+        }
+        queryParams: {
+            name: String
+            status: String
+        }
+        responses: {
+            200: Pet
+            400: "Invalid ID supplied"
+            404: "Pet not found"
+        }
+    }
+
+
+    get getById {
+        path: "/{petId}"
+        pathParams: {
+            petId: Int
+        }
+        responses: {
+            200: Pet
+            404: "Pet not found"
+        }
+    }
+
+    get findByStatus {
+        path: "/findByStatus"
+        queryParams: {
+            status: String
+        }
+        responses: {
+            200: [Pet]
+            400: "Invalid status value"
+        }
+    }
+
+    delete deletePet {
+        path: "/{petId}"
+        pathParams: {
+            petId: Int
+        }
+        responses: {
+            400: "Invalid ID"
+        }
+    }
+}
+
 model Category {
     id: Int
     name: String
-    isBroken: Boolean
+}
+
+
+model Pet {
+    id: Int
+    name: String
+    category: Category
+    status: String
+}
+
+model Order {
+    id: Int
+    petId: Int
+    quantity: Int
+    complete: Boolean
+}
+
+model User {
+    id: Int
+    username: String
+    firstName: String
+    lastName: String
+    email: String
+    password: String
+    phone: String
+    userStatus: Int
+}
+
+model ApiResponse {
+    code: Int
+    type: String
+    message: String
 }

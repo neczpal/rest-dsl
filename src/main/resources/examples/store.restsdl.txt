@@ -7,6 +7,11 @@ service Store {
         auth: [ api_key ]
         responses: 200
     }
+
+    resource Order {
+        path: "/order"
+        model: Order
+    }
 }
 
 // 2. The Resource (for managing Orders)
