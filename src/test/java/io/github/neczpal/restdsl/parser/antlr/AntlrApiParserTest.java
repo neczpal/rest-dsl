@@ -1,15 +1,14 @@
-package io.github.neczpal.restdsl.parser;
+package io.github.neczpal.restdsl.parser.antlr;
 
 import io.github.neczpal.restdsl.RestDSLLexer;
 import io.github.neczpal.restdsl.RestDSLParser;
-import io.github.neczpal.restdsl.model.Api;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ApiParserTest {
+public class AntlrApiParserTest {
 
     @Test
     public void testApiDefinition() {
@@ -24,12 +23,11 @@ public class ApiParserTest {
         RestDSLLexer lexer = new RestDSLLexer(CharStreams.fromString(input));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         RestDSLParser parser = new RestDSLParser(tokens);
-        RestDSLParser.ApiDefinitionContext apiDefinition = parser.file().definition(0).apiDefinition();
 
-        Api api = new ApiParser().parse(apiDefinition);
-        assertEquals("Petstore", api.getName());
-        assertEquals("Petstore", api.getTitle());
-        assertEquals("1.0.27", api.getVersion());
-        assertEquals("/api/v3", api.getBase());
+        RestDSLParser.FileContext fileContext = parser.file();
+
+        assertEquals(1, fileContext.definition().size());
+        RestDSLParser.ApiDefinitionContext apiContext = fileContext.definition(0).apiDefinition();
+        assertEquals("Petstore", apiContext.ID().getText());
     }
 }

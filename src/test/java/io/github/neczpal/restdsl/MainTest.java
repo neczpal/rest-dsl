@@ -1,0 +1,74 @@
+package io.github.neczpal.restdsl;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class MainTest {
+
+    @TempDir
+    Path tempDir;
+
+    @Test
+    public void testMain() throws IOException {
+        Path inputFile = tempDir.resolve("test.rsdl");
+        Path outputFile = tempDir.resolve("output.yaml");
+
+        String rsdlContent = """
+                api Petstore {
+                    version: "1.0.0"
+                    base: "/api/v3"
+                }
+                model User {
+                    id: Int
+                    name: String
+                }
+                service PetService {
+                    base: "/pet"
+                    get getPet {
+                        path: "/{id}"
+                    }
+                }
+        """;
+        Files.write(inputFile, rsdlContent.getBytes());
+
+        Main.main(new String[]{"-g", "openapi", inputFile.toString(), outputFile.toString()});
+
+        assertTrue(Files.exists(outputFile));
+        String content = new String(Files.readAllBytes(outputFile));
+        assertTrue(content.contains("openapi: 3.0.0"));
+        assertTrue(content.contains("Petstore"));
+        assertTrue(content.contains("User"));
+        assertTrue(content.contains("getPet"));
+    }
+
+    @Test
+    public void testSimpleRsdl() throws IOException {
+        Path inputFile = Paths.get("src/test/resources/simple.rdsl");
+        Path outputFile = tempDir.resolve("simple_output.yaml");
+
+        assertTrue(Files.exists(inputFile), "Test resource simple.rdsl not found");
+
+        Main.main(new String[]{"-g", "openapi", inputFile.toString(), outputFile.toString()});
+
+        assertTrue(Files.exists(outputFile));
+        String content = new String(Files.readAllBytes(outputFile));
+        assertTrue(content.contains("openapi: 3.0.0"));
+        assertTrue(content.contains("Petstore"));
+        assertTrue(content.contains("Pet"));
+        assertTrue(content.contains("Category"));
+        assertTrue(content.contains("Order"));
+        assertTrue(content.contains("User"));
+        assertTrue(content.contains("ApiResponse"));
+        assertTrue(content.contains("/pet"));
+        assertTrue(content.contains("addPet"));
+        assertTrue(content.contains("updatePet"));
+        assertTrue(content.contains("findByStatus"));
+    }
+}

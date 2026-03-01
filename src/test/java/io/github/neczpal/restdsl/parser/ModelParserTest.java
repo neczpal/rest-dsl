@@ -2,6 +2,7 @@ package io.github.neczpal.restdsl.parser;
 
 import io.github.neczpal.restdsl.RestDSLLexer;
 import io.github.neczpal.restdsl.RestDSLParser;
+import io.github.neczpal.restdsl.model.Model;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Test;
@@ -24,20 +25,18 @@ public class ModelParserTest {
         RestDSLLexer lexer = new RestDSLLexer(CharStreams.fromString(input));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         RestDSLParser parser = new RestDSLParser(tokens);
+        RestDSLParser.ModelDefinitionContext modelDefinition = parser.file().definition(0).modelDefinition();
 
-        RestDSLParser.FileContext fileContext = parser.file();
-
-        assertEquals(1, fileContext.definition().size());
-        RestDSLParser.ModelDefinitionContext modelContext = fileContext.definition(0).modelDefinition();
-        assertEquals("Person", modelContext.ID().getText());
-        assertEquals(4, modelContext.field().size());
-        assertEquals("id", modelContext.field(0).ID().getText());
-        assertEquals("Int", modelContext.field(0).type().getText());
-        assertEquals("name", modelContext.field(1).ID().getText());
-        assertEquals("String", modelContext.field(1).type().getText());
-        assertEquals("height", modelContext.field(2).ID().getText());
-        assertEquals("Double", modelContext.field(2).type().getText());
-        assertEquals("isDead", modelContext.field(3).ID().getText());
-        assertEquals("Boolean", modelContext.field(3).type().getText());
+        Model model = new ModelParser().parse(modelDefinition);
+        assertEquals("Person", model.getName());
+        assertEquals(4, model.getFields().size());
+        assertEquals("id", model.getFields().get(0).getName());
+        assertEquals("Int", model.getFields().get(0).getType());
+        assertEquals("name", model.getFields().get(1).getName());
+        assertEquals("String", model.getFields().get(1).getType());
+        assertEquals("height", model.getFields().get(2).getName());
+        assertEquals("Double", model.getFields().get(2).getType());
+        assertEquals("isDead", model.getFields().get(3).getName());
+        assertEquals("Boolean", model.getFields().get(3).getType());
     }
 }

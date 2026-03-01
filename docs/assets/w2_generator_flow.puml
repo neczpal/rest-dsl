@@ -1,0 +1,17 @@
+@startuml
+start
+-> example.rdsl;
+
+:Parse with ANTLR;
+-> Parse Tree;
+
+:Map to Internal Model;
+-> Api, Models, Services;
+
+:Select Generator (OpenApiGenerator);
+
+:Generate Output;
+-> e.g: openapi.yaml;
+
+stop
+@enduml
