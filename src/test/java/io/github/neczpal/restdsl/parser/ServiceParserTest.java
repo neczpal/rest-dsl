@@ -41,7 +41,7 @@ public class ServiceParserTest {
         assertEquals("Pet", service.getMethods().getFirst().getBodyType());
         assertEquals(2, service.getMethods().getFirst().getResponses().size());
         assertEquals("Pet", service.getMethods().getFirst().getResponses().get(200));
-        assertEquals("Invalid input", service.getMethods().getFirst().getResponses().get(405));
+        assertEquals("\"Invalid input\"", service.getMethods().getFirst().getResponses().get(405));
     }
 
     @Test
@@ -84,14 +84,14 @@ public class ServiceParserTest {
         assertEquals("Pet", service.getMethods().getFirst().getBodyType());
         assertEquals(2, service.getMethods().getFirst().getResponses().size());
         assertEquals("Pet", service.getMethods().getFirst().getResponses().get(200));
-        assertEquals("Invalid input", service.getMethods().getFirst().getResponses().get(405));
+        assertEquals("\"Invalid input\"", service.getMethods().getFirst().getResponses().get(405));
 
         assertEquals("updatePet", service.getMethods().get(1).getName());
         assertEquals("put", service.getMethods().get(1).getVerb());
         assertEquals("Pet", service.getMethods().get(1).getBodyType());
         assertEquals(3, service.getMethods().get(1).getResponses().size());
         assertEquals("Pet", service.getMethods().get(1).getResponses().get(200));
-        assertEquals("Invalid ID supplied", service.getMethods().get(1).getResponses().get(400));
-        assertEquals("Pet not found", service.getMethods().get(1).getResponses().get(404));
+        assertEquals("\"Invalid ID supplied\"", service.getMethods().get(1).getResponses().get(400));
+        assertEquals("\"Pet not found\"", service.getMethods().get(1).getResponses().get(404));
     }
 }

@@ -4,6 +4,7 @@ import io.github.neczpal.restdsl.generator.Generator;
 import io.github.neczpal.restdsl.generator.openapi.OpenApiGenerator;
 import io.github.neczpal.restdsl.model.Api;
 import io.github.neczpal.restdsl.model.Model;
+import io.github.neczpal.restdsl.model.RestDsl;
 import io.github.neczpal.restdsl.model.Service;
 import io.github.neczpal.restdsl.parser.ApiParser;
 import io.github.neczpal.restdsl.parser.ModelParser;
@@ -68,7 +69,8 @@ public class Main {
                 return;
             }
 
-            String content = generator.generate(api, models, services);
+            RestDsl restDsl = new RestDsl(api, models, services);
+            String content = generator.generate(restDsl);
 
             Files.write(Paths.get(outputFile), content.getBytes());
             System.out.println("Successfully generated " + generatorName + " spec to " + outputFile);

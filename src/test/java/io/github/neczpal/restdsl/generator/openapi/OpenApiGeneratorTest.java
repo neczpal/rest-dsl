@@ -4,6 +4,7 @@ import io.github.neczpal.restdsl.model.Api;
 import io.github.neczpal.restdsl.model.Field;
 import io.github.neczpal.restdsl.model.Method;
 import io.github.neczpal.restdsl.model.Model;
+import io.github.neczpal.restdsl.model.RestDsl;
 import io.github.neczpal.restdsl.model.Service;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +27,8 @@ public class OpenApiGeneratorTest {
         Service service = new Service("PetService", "/api/v3", List.of(method));
 
         OpenApiGenerator generator = new OpenApiGenerator();
-        String result = generator.generate(api, List.of(model), List.of(service));
+        RestDsl restDsl = new RestDsl(api, List.of(model), List.of(service));
+        String result = generator.generate(restDsl);
 
         String expected = """
                 openapi: 3.0.0
@@ -39,6 +41,9 @@ public class OpenApiGeneratorTest {
                   /api/v3/pet/{id}:
                     get:
                       summary: getPet
+                      responses:
+                        '200':
+                          description: OK
                 components:
                   schemas:
                     User:

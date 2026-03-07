@@ -20,8 +20,11 @@ public class ServiceGeneratorTest {
         String expected = """
                 paths:
                   /api/v3/pet/{id}:
-                    get:Ï
+                    get:
                       summary: getPet
+                      responses:
+                        '200':
+                          description: OK
                 """;
         assertEquals(expected, result);
     }
