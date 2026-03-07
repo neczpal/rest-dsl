@@ -1,7 +1,10 @@
 package io.github.neczpal.restdsl.generator.openapi;
 
+import io.github.neczpal.restdsl.generator.GeneratedFile;
 import io.github.neczpal.restdsl.generator.Generator;
 import io.github.neczpal.restdsl.model.RestDsl;
+
+import java.util.List;
 
 public class OpenApiGenerator implements Generator {
     private final ApiGenerator apiGenerator;
@@ -15,11 +18,11 @@ public class OpenApiGenerator implements Generator {
     }
 
     @Override
-    public String generate(RestDsl restDsl) {
+    public List<GeneratedFile> generate(RestDsl restDsl) {
         StringBuilder sb = new StringBuilder();
         sb.append(apiGenerator.generate(restDsl.api()));
         sb.append(serviceGenerator.generate(restDsl.services()));
         sb.append(modelGenerator.generate(restDsl.models()));
-        return sb.toString();
+        return List.of(new GeneratedFile("openapi.yaml", sb.toString()));
     }
 }

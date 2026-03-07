@@ -51,7 +51,7 @@ public class OpenApiGeneratorTest {
                 .models(List.of(model))
                 .services(List.of(service))
                 .build();
-        String result = generator.generate(restDsl);
+        String result = generator.generate(restDsl).getFirst().content();
 
         String expected = """
                 openapi: 3.0.0

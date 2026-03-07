@@ -18,7 +18,7 @@ public class MainTest {
     @Test
     public void testMain() throws IOException {
         Path inputFile = tempDir.resolve("test.rsdl");
-        Path outputFile = tempDir.resolve("output.yaml");
+        Path outputDir = tempDir.resolve("output");
 
         String rsdlContent = """
                 api Petstore {
@@ -38,8 +38,9 @@ public class MainTest {
         """;
         Files.write(inputFile, rsdlContent.getBytes());
 
-        Main.main(new String[]{"-g", "openapi", inputFile.toString(), outputFile.toString()});
+        Main.main(new String[]{"-g", "openapi", inputFile.toString(), outputDir.toString()});
 
+        Path outputFile = outputDir.resolve("openapi.yaml");
         assertTrue(Files.exists(outputFile));
         String content = new String(Files.readAllBytes(outputFile));
         assertTrue(content.contains("openapi: 3.0.0"));
@@ -51,12 +52,13 @@ public class MainTest {
     @Test
     public void testSimpleRsdl() throws IOException {
         Path inputFile = Paths.get("src/test/resources/simple.rdsl");
-        Path outputFile = tempDir.resolve("simple_output.yaml");
+        Path outputDir = tempDir.resolve("simple_output");
 
         assertTrue(Files.exists(inputFile), "Test resource simple.rdsl not found");
 
-        Main.main(new String[]{"-g", "openapi", inputFile.toString(), outputFile.toString()});
+        Main.main(new String[]{"-g", "openapi", inputFile.toString(), outputDir.toString()});
 
+        Path outputFile = outputDir.resolve("openapi.yaml");
         assertTrue(Files.exists(outputFile));
         String content = new String(Files.readAllBytes(outputFile));
         assertTrue(content.contains("openapi: 3.0.0"));

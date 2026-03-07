@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Generate OpenAPI" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="io.github.neczpal.restdsl.Main" />
+    <module name="rest-dsl" />
+    <option name="PROGRAM_PARAMETERS" value="-g openapi src/test/resources/simple/simple.rdsl target/generated-sources/openapi" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
