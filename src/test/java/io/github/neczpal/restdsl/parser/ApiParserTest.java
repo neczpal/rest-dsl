@@ -27,9 +27,9 @@ public class ApiParserTest {
         RestDSLParser.ApiDefinitionContext apiDefinition = parser.file().definition(0).apiDefinition();
 
         Api api = new ApiParser().parse(apiDefinition);
-        assertEquals("Petstore", api.getName());
-        assertEquals("Petstore", api.getTitle());
-        assertEquals("1.0.27", api.getVersion());
-        assertEquals("/api/v3", api.getBase());
+        assertEquals("Petstore", api.name());
+        assertEquals("Petstore", api.title());
+        assertEquals("1.0.27", api.version());
+        assertEquals("/api/v3", api.base());
     }
 }

@@ -15,8 +15,14 @@ public class ModelParser {
         for (RestDSLParser.FieldContext fieldCtx : ctx.field()) {
             String fieldName = fieldCtx.ID().getText();
             String fieldType = fieldCtx.type().getText();
-            fields.add(new Field(fieldName, fieldType));
+            fields.add(Field.builder()
+                    .name(fieldName)
+                    .type(fieldType)
+                    .build());
         }
-        return new Model(name, fields);
+        return Model.builder()
+                .name(name)
+                .fields(fields)
+                .build();
     }
 }

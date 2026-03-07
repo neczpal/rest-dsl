@@ -14,12 +14,12 @@ public class ModelGenerator {
         sb.append("components:\n");
         sb.append("  schemas:\n");
         for (Model model : models) {
-            sb.append("    ").append(model.getName()).append(":\n");
+            sb.append("    ").append(model.name()).append(":\n");
             sb.append("      type: object\n");
             sb.append("      properties:\n");
-            for (Field field : model.getFields()) {
-                sb.append("        ").append(field.getName()).append(":\n");
-                generateSchemaType(sb, field.getType(), "          ");
+            for (Field field : model.fields()) {
+                sb.append("        ").append(field.name()).append(":\n");
+                generateSchemaType(sb, field.type(), "          ");
             }
         }
         return sb.toString();

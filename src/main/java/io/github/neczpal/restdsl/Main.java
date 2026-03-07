@@ -69,7 +69,11 @@ public class Main {
                 return;
             }
 
-            RestDsl restDsl = new RestDsl(api, models, services);
+            RestDsl restDsl = RestDsl.builder()
+                    .api(api)
+                    .models(models)
+                    .services(services)
+                    .build();
             String content = generator.generate(restDsl);
 
             Files.write(Paths.get(outputFile), content.getBytes());

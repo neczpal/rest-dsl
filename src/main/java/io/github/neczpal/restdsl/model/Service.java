@@ -1,27 +1,12 @@
 package io.github.neczpal.restdsl.model;
 
+import lombok.Builder;
 import java.util.List;
+import java.util.ArrayList;
 
-public class Service {
-    private String name;
-    private String base;
-    private List<Method> methods;
-
-    public Service(String name, String base, List<Method> methods) {
-        this.name = name;
-        this.base = base;
-        this.methods = methods;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getBase() {
-        return base;
-    }
-
-    public List<Method> getMethods() {
-        return methods;
+@Builder
+public record Service(String name, String base, List<Method> methods) {
+    public Service {
+        if (methods == null) methods = new ArrayList<>();
     }
 }

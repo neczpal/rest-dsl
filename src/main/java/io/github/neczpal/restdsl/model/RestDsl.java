@@ -1,27 +1,13 @@
 package io.github.neczpal.restdsl.model;
 
+import lombok.Builder;
 import java.util.List;
+import java.util.ArrayList;
 
-public class RestDsl {
-    private final Api api;
-    private final List<Model> models;
-    private final List<Service> services;
-
-    public RestDsl(Api api, List<Model> models, List<Service> services) {
-        this.api = api;
-        this.models = models;
-        this.services = services;
-    }
-
-    public Api getApi() {
-        return api;
-    }
-
-    public List<Model> getModels() {
-        return models;
-    }
-
-    public List<Service> getServices() {
-        return services;
+@Builder
+public record RestDsl(Api api, List<Model> models, List<Service> services) {
+    public RestDsl {
+        if (models == null) models = new ArrayList<>();
+        if (services == null) services = new ArrayList<>();
     }
 }

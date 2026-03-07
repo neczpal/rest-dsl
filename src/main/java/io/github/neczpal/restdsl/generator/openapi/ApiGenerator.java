@@ -7,11 +7,11 @@ public class ApiGenerator {
         StringBuilder sb = new StringBuilder();
         sb.append("openapi: 3.0.0\n");
         sb.append("info:\n");
-        sb.append("  title: ").append(api.getTitle() != null ? api.getTitle() : api.getName()).append("\n");
-        sb.append("  version: ").append(api.getVersion() != null ? api.getVersion() : "1.0.0").append("\n");
-        if (api.getBase() != null) {
+        sb.append("  title: ").append(api.title() != null ? api.title() : api.name()).append("\n");
+        sb.append("  version: ").append(api.version() != null ? api.version() : "1.0.0").append("\n");
+        if (api.base() != null) {
             sb.append("servers:\n");
-            sb.append("  - url: ").append(api.getBase()).append("\n");
+            sb.append("  - url: ").append(api.base()).append("\n");
         }
         return sb.toString();
     }

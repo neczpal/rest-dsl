@@ -1,21 +1,12 @@
 package io.github.neczpal.restdsl.model;
 
+import lombok.Builder;
 import java.util.List;
+import java.util.ArrayList;
 
-public class Model {
-    private String name;
-    private List<Field> fields;
-
-    public Model(String name, List<Field> fields) {
-        this.name = name;
-        this.fields = fields;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public List<Field> getFields() {
-        return fields;
+@Builder
+public record Model(String name, List<Field> fields) {
+    public Model {
+        if (fields == null) fields = new ArrayList<>();
     }
 }

@@ -28,8 +28,8 @@ public class ServiceGenerator {
             sb.append("  ").append(path).append(":\n");
 
             for (Method method : methods) {
-                sb.append("    ").append(method.getVerb().toLowerCase()).append(":\n");
-                sb.append("      summary: ").append(method.getName()).append("\n");
+                sb.append("    ").append(method.verb().toLowerCase()).append(":\n");
+                sb.append("      summary: ").append(method.name()).append("\n");
 
                 generateParameters(sb, method);
                 generateRequestBody(sb, method);
@@ -42,9 +42,9 @@ public class ServiceGenerator {
     private Map<String, List<Method>> groupMethodsByPath(List<Service> services) {
         Map<String, List<Method>> methodsByPath = new LinkedHashMap<>();
         for (Service service : services) {
-            String base = service.getBase() != null ? service.getBase() : "";
-            for (Method method : service.getMethods()) {
-                String methodPath = method.getPath() != null ? method.getPath() : "";
+            String base = service.base() != null ? service.base() : "";
+            for (Method method : service.methods()) {
+                String methodPath = method.path() != null ? method.path() : "";
                 String fullPath = base + methodPath;
                 methodsByPath.computeIfAbsent(fullPath, _ -> new ArrayList<>()).add(method);
             }
@@ -53,8 +53,8 @@ public class ServiceGenerator {
     }
 
     private void generateParameters(StringBuilder sb, Method method) {
-        boolean hasPathParams = method.getPathParams() != null && !method.getPathParams().isEmpty();
-        boolean hasQueryParams = method.getQueryParams() != null && !method.getQueryParams().isEmpty();
+        boolean hasPathParams = method.pathParams() != null && !method.pathParams().isEmpty();
+        boolean hasQueryParams = method.queryParams() != null && !method.queryParams().isEmpty();
 
         if (!hasPathParams && !hasQueryParams) {
             return;
@@ -62,44 +62,44 @@ public class ServiceGenerator {
 
         sb.append("      parameters:\n");
         if (hasPathParams) {
-            for (Field param : method.getPathParams()) {
-                sb.append("        - name: ").append(param.getName()).append("\n");
+            for (Field param : method.pathParams()) {
+                sb.append("        - name: ").append(param.name()).append("\n");
                 sb.append("          in: path\n");
                 sb.append("          required: true\n");
                 sb.append("          schema:\n");
-                sb.append("            type: ").append(mapType(param.getType())).append("\n");
+                sb.append("            type: ").append(mapType(param.type())).append("\n");
             }
         }
         if (hasQueryParams) {
-            for (Field param : method.getQueryParams()) {
-                sb.append("        - name: ").append(param.getName()).append("\n");
+            for (Field param : method.queryParams()) {
+                sb.append("        - name: ").append(param.name()).append("\n");
                 sb.append("          in: query\n");
                 sb.append("          schema:\n");
-                sb.append("            type: ").append(mapType(param.getType())).append("\n");
+                sb.append("            type: ").append(mapType(param.type())).append("\n");
             }
         }
     }
 
     private void generateRequestBody(StringBuilder sb, Method method) {
-        if (method.getBodyType() == null) {
+        if (method.bodyType() == null) {
             return;
         }
         sb.append("      requestBody:\n");
         sb.append("        content:\n");
         sb.append("          application/json:\n");
         sb.append("            schema:\n");
-        generateSchemaType(sb, method.getBodyType(), "              ");
+        generateSchemaType(sb, method.bodyType(), "              ");
     }
 
     private void generateResponses(StringBuilder sb, Method method) {
         sb.append("      responses:\n");
-        if (method.getResponses() == null || method.getResponses().isEmpty()) {
+        if (method.responses() == null || method.responses().isEmpty()) {
             sb.append("        '200':\n");
             sb.append("          description: OK\n");
             return;
         }
 
-        for (Map.Entry<Integer, String> entry : method.getResponses().entrySet()) {
+        for (Map.Entry<Integer, String> entry : method.responses().entrySet()) {
             String responseValue = entry.getValue();
             sb.append("        '").append(entry.getKey()).append("':\n");
 

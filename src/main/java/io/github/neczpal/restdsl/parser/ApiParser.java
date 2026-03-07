@@ -19,6 +19,11 @@ public class ApiParser {
                 base = ((RestDSLParser.BasePropContext) prop).STRING().getText().replace("\"", "");
             }
         }
-        return new Api(name, title, version, base);
+        return Api.builder()
+                .name(name)
+                .title(title)
+                .version(version)
+                .base(base)
+                .build();
     }
 }

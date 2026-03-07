@@ -23,7 +23,11 @@ public class ServiceParser {
                 methods.add(parseMethod(((RestDSLParser.ServiceMethodPropContext) elem).methodDefinition()));
             }
         }
-        return new Service(name, base, methods);
+        return Service.builder()
+                .name(name)
+                .base(base)
+                .methods(methods)
+                .build();
     }
 
     private Method parseMethod(RestDSLParser.MethodDefinitionContext ctx) {
@@ -42,11 +46,17 @@ public class ServiceParser {
                 bodyType = ((RestDSLParser.MethodBodyPropContext) elem).type().getText();
             } else if (elem instanceof RestDSLParser.MethodPathParamsPropContext) {
                 for (RestDSLParser.ParamFieldContext param : ((RestDSLParser.MethodPathParamsPropContext) elem).paramField()) {
-                    pathParams.add(new Field(param.ID().getText(), param.type().getText()));
+                    pathParams.add(Field.builder()
+                            .name(param.ID().getText())
+                            .type(param.type().getText())
+                            .build());
                 }
             } else if (elem instanceof RestDSLParser.MethodQueryParamsPropContext) {
                 for (RestDSLParser.ParamFieldContext param : ((RestDSLParser.MethodQueryParamsPropContext) elem).paramField()) {
-                    queryParams.add(new Field(param.ID().getText(), param.type().getText()));
+                    queryParams.add(Field.builder()
+                            .name(param.ID().getText())
+                            .type(param.type().getText())
+                            .build());
                 }
             } else if (elem instanceof RestDSLParser.MethodResponsesPropContext) {
                 for (RestDSLParser.ResponseFieldContext response : ((RestDSLParser.MethodResponsesPropContext) elem).responseField()) {
@@ -61,6 +71,14 @@ public class ServiceParser {
                 }
             }
         }
-        return new Method(verb, name, path, bodyType, pathParams, queryParams, responses);
+        return Method.builder()
+                .verb(verb)
+                .name(name)
+                .path(path)
+                .bodyType(bodyType)
+                .pathParams(pathParams)
+                .queryParams(queryParams)
+                .responses(responses)
+                .build();
     }
 }

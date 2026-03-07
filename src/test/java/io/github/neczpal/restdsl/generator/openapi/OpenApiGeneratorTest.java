@@ -18,16 +18,39 @@ public class OpenApiGeneratorTest {
 
     @Test
     public void testGenerate() {
-        Api api = new Api("Petstore", "Petstore API", "1.0.0", "/api/v3");
-        Model model = new Model("User", Arrays.asList(
-                new Field("id", "Int"),
-                new Field("name", "String")
-        ));
-        Method method = new Method("GET", "getPet", "/pet/{id}", null, Collections.emptyList(), Collections.emptyList(), Collections.emptyMap());
-        Service service = new Service("PetService", "/api/v3", List.of(method));
+        Api api = Api.builder()
+                .name("Petstore")
+                .title("Petstore API")
+                .version("1.0.0")
+                .base("/api/v3")
+                .build();
+        Model model = Model.builder()
+                .name("User")
+                .fields(Arrays.asList(
+                        Field.builder().name("id").type("Int").build(),
+                        Field.builder().name("name").type("String").build()
+                ))
+                .build();
+        Method method = Method.builder()
+                .verb("GET")
+                .name("getPet")
+                .path("/pet/{id}")
+                .pathParams(Collections.emptyList())
+                .queryParams(Collections.emptyList())
+                .responses(Collections.emptyMap())
+                .build();
+        Service service = Service.builder()
+                .name("PetService")
+                .base("/api/v3")
+                .methods(List.of(method))
+                .build();
 
         OpenApiGenerator generator = new OpenApiGenerator();
-        RestDsl restDsl = new RestDsl(api, List.of(model), List.of(service));
+        RestDsl restDsl = RestDsl.builder()
+                .api(api)
+                .models(List.of(model))
+                .services(List.of(service))
+                .build();
         String result = generator.generate(restDsl);
 
         String expected = """

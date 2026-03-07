@@ -28,15 +28,15 @@ public class ModelParserTest {
         RestDSLParser.ModelDefinitionContext modelDefinition = parser.file().definition(0).modelDefinition();
 
         Model model = new ModelParser().parse(modelDefinition);
-        assertEquals("Person", model.getName());
-        assertEquals(4, model.getFields().size());
-        assertEquals("id", model.getFields().get(0).getName());
-        assertEquals("Int", model.getFields().get(0).getType());
-        assertEquals("name", model.getFields().get(1).getName());
-        assertEquals("String", model.getFields().get(1).getType());
-        assertEquals("height", model.getFields().get(2).getName());
-        assertEquals("Double", model.getFields().get(2).getType());
-        assertEquals("isDead", model.getFields().get(3).getName());
-        assertEquals("Boolean", model.getFields().get(3).getType());
+        assertEquals("Person", model.name());
+        assertEquals(4, model.fields().size());
+        assertEquals("id", model.fields().get(0).name());
+        assertEquals("Int", model.fields().get(0).type());
+        assertEquals("name", model.fields().get(1).name());
+        assertEquals("String", model.fields().get(1).type());
+        assertEquals("height", model.fields().get(2).name());
+        assertEquals("Double", model.fields().get(2).type());
+        assertEquals("isDead", model.fields().get(3).name());
+        assertEquals("Boolean", model.fields().get(3).type());
     }
 }

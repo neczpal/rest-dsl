@@ -13,8 +13,19 @@ public class ServiceGeneratorTest {
 
     @Test
     public void testGenerate() {
-        Method method = new Method("GET", "getPet", "/pet/{id}", null, Collections.emptyList(), Collections.emptyList(), Collections.emptyMap());
-        Service service = new Service("PetService", "/api/v3", List.of(method));
+        Method method = Method.builder()
+                .verb("GET")
+                .name("getPet")
+                .path("/pet/{id}")
+                .pathParams(Collections.emptyList())
+                .queryParams(Collections.emptyList())
+                .responses(Collections.emptyMap())
+                .build();
+        Service service = Service.builder()
+                .name("PetService")
+                .base("/api/v3")
+                .methods(List.of(method))
+                .build();
         ServiceGenerator generator = new ServiceGenerator();
         String result = generator.generate(List.of(service));
         String expected = """

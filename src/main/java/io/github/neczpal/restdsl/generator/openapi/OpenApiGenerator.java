@@ -17,9 +17,9 @@ public class OpenApiGenerator implements Generator {
     @Override
     public String generate(RestDsl restDsl) {
         StringBuilder sb = new StringBuilder();
-        sb.append(apiGenerator.generate(restDsl.getApi()));
-        sb.append(serviceGenerator.generate(restDsl.getServices()));
-        sb.append(modelGenerator.generate(restDsl.getModels()));
+        sb.append(apiGenerator.generate(restDsl.api()));
+        sb.append(serviceGenerator.generate(restDsl.services()));
+        sb.append(modelGenerator.generate(restDsl.models()));
         return sb.toString();
     }
 }

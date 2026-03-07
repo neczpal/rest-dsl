@@ -13,10 +13,13 @@ public class ModelGeneratorTest {
 
     @Test
     public void testGenerate() {
-        Model model = new Model("User", Arrays.asList(
-                new Field("id", "Int"),
-                new Field("name", "String")
-        ));
+        Model model = Model.builder()
+                .name("User")
+                .fields(Arrays.asList(
+                        Field.builder().name("id").type("Int").build(),
+                        Field.builder().name("name").type("String").build()
+                ))
+                .build();
         ModelGenerator generator = new ModelGenerator();
         String result = generator.generate(List.of(model));
         String expected = """

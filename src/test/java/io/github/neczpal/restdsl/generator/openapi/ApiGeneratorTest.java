@@ -9,7 +9,12 @@ public class ApiGeneratorTest {
 
     @Test
     public void testGenerate() {
-        Api api = new Api("Petstore", "Petstore API", "1.0.0", "/api/v3");
+        Api api = Api.builder()
+                .name("Petstore")
+                .title("Petstore API")
+                .version("1.0.0")
+                .base("/api/v3")
+                .build();
         ApiGenerator generator = new ApiGenerator();
         String result = generator.generate(api);
         String expected = """

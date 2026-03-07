@@ -33,15 +33,15 @@ public class ServiceParserTest {
         RestDSLParser.ServiceDefinitionContext serviceDefinition = parser.file().definition(0).serviceDefinition();
 
         Service service = new ServiceParser().parse(serviceDefinition);
-        assertEquals("Pet", service.getName());
-        assertEquals("/pet", service.getBase());
-        assertEquals(1, service.getMethods().size());
-        assertEquals("addPet", service.getMethods().getFirst().getName());
-        assertEquals("post", service.getMethods().getFirst().getVerb());
-        assertEquals("Pet", service.getMethods().getFirst().getBodyType());
-        assertEquals(2, service.getMethods().getFirst().getResponses().size());
-        assertEquals("Pet", service.getMethods().getFirst().getResponses().get(200));
-        assertEquals("\"Invalid input\"", service.getMethods().getFirst().getResponses().get(405));
+        assertEquals("Pet", service.name());
+        assertEquals("/pet", service.base());
+        assertEquals(1, service.methods().size());
+        assertEquals("addPet", service.methods().getFirst().name());
+        assertEquals("post", service.methods().getFirst().verb());
+        assertEquals("Pet", service.methods().getFirst().bodyType());
+        assertEquals(2, service.methods().getFirst().responses().size());
+        assertEquals("Pet", service.methods().getFirst().responses().get(200));
+        assertEquals("\"Invalid input\"", service.methods().getFirst().responses().get(405));
     }
 
     @Test
@@ -75,23 +75,23 @@ public class ServiceParserTest {
         RestDSLParser.ServiceDefinitionContext serviceDefinition = parser.file().definition(0).serviceDefinition();
 
         Service service = new ServiceParser().parse(serviceDefinition);
-        assertEquals("Pet", service.getName());
-        assertEquals("/pet", service.getBase());
-        assertEquals(2, service.getMethods().size());
+        assertEquals("Pet", service.name());
+        assertEquals("/pet", service.base());
+        assertEquals(2, service.methods().size());
 
-        assertEquals("addPet", service.getMethods().getFirst().getName());
-        assertEquals("post", service.getMethods().getFirst().getVerb());
-        assertEquals("Pet", service.getMethods().getFirst().getBodyType());
-        assertEquals(2, service.getMethods().getFirst().getResponses().size());
-        assertEquals("Pet", service.getMethods().getFirst().getResponses().get(200));
-        assertEquals("\"Invalid input\"", service.getMethods().getFirst().getResponses().get(405));
+        assertEquals("addPet", service.methods().getFirst().name());
+        assertEquals("post", service.methods().getFirst().verb());
+        assertEquals("Pet", service.methods().getFirst().bodyType());
+        assertEquals(2, service.methods().getFirst().responses().size());
+        assertEquals("Pet", service.methods().getFirst().responses().get(200));
+        assertEquals("\"Invalid input\"", service.methods().getFirst().responses().get(405));
 
-        assertEquals("updatePet", service.getMethods().get(1).getName());
-        assertEquals("put", service.getMethods().get(1).getVerb());
-        assertEquals("Pet", service.getMethods().get(1).getBodyType());
-        assertEquals(3, service.getMethods().get(1).getResponses().size());
-        assertEquals("Pet", service.getMethods().get(1).getResponses().get(200));
-        assertEquals("\"Invalid ID supplied\"", service.getMethods().get(1).getResponses().get(400));
-        assertEquals("\"Pet not found\"", service.getMethods().get(1).getResponses().get(404));
+        assertEquals("updatePet", service.methods().get(1).name());
+        assertEquals("put", service.methods().get(1).verb());
+        assertEquals("Pet", service.methods().get(1).bodyType());
+        assertEquals(3, service.methods().get(1).responses().size());
+        assertEquals("Pet", service.methods().get(1).responses().get(200));
+        assertEquals("\"Invalid ID supplied\"", service.methods().get(1).responses().get(400));
+        assertEquals("\"Pet not found\"", service.methods().get(1).responses().get(404));
     }
 }
