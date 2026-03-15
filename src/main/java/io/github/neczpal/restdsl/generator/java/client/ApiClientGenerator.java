@@ -1,4 +1,4 @@
-package io.github.neczpal.restdsl.generator.java.server;
+package io.github.neczpal.restdsl.generator.java.client;
 
 import io.github.neczpal.restdsl.generator.GeneratedFile;
 import io.github.neczpal.restdsl.generator.Generator;
@@ -8,11 +8,11 @@ import io.github.neczpal.restdsl.model.RestDsl;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SpringServerApiGenerator implements Generator {
+public class ApiClientGenerator implements Generator {
     private final ApiGenerator apiGenerator;
     private final ModelGenerator modelGenerator;
 
-    public SpringServerApiGenerator(String packageName) {
+    public ApiClientGenerator(String packageName) {
         this.apiGenerator = new ApiGenerator(packageName);
         this.modelGenerator = new ModelGenerator(packageName);
     }

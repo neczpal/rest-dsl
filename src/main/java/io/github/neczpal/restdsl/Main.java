@@ -2,6 +2,7 @@ package io.github.neczpal.restdsl;
 
 import io.github.neczpal.restdsl.generator.GeneratedFile;
 import io.github.neczpal.restdsl.generator.Generator;
+import io.github.neczpal.restdsl.generator.java.client.ApiClientGenerator;
 import io.github.neczpal.restdsl.generator.java.server.SpringServerApiGenerator;
 import io.github.neczpal.restdsl.generator.openapi.OpenApiGenerator;
 import io.github.neczpal.restdsl.model.Api;
@@ -24,22 +25,47 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        if (args.length < 3 || !args[0].equals("-g")) {
-            System.out.println("Usage: java -jar rest-dsl.jar -g <generator-name> <input-file.rsdl> [output-directory]");
-            return;
+        String generatorName = null;
+        String inputFile = null;
+        String outputDirectory = ".";
+        String packageName = null;
+
+        for (int i = 0; i < args.length; i++) {
+            switch (args[i]) {
+                case "-g":
+                    if (i + 1 < args.length) {
+                        generatorName = args[++i];
+                    }
+                    break;
+                case "-p":
+                    if (i + 1 < args.length) {
+                        packageName = args[++i];
+                    }
+                    break;
+                default:
+                    if (inputFile == null) {
+                        inputFile = args[i];
+                    } else {
+                        outputDirectory = args[i];
+                    }
+                    break;
+            }
         }
 
-        String generatorName = args[1];
-        String inputFile = args[2];
-        String outputDirectory = args.length > 3 ? args[3] : ".";
+        if (generatorName == null || inputFile == null) {
+            System.out.println("Usage: java -jar rest-dsl.jar -g <generator-name> [-p <package-name>] <input-file.rsdl> [output-directory]");
+            return;
+        }
 
         Generator generator;
         if ("openapi".equalsIgnoreCase(generatorName)) {
             generator = new OpenApiGenerator();
         } else if ("spring".equalsIgnoreCase(generatorName)) {
-            generator = new SpringServerApiGenerator();
+            generator = new SpringServerApiGenerator(packageName);
+        } else if ("restclient".equalsIgnoreCase(generatorName)) {
+            generator = new ApiClientGenerator(packageName);
         } else {
-            System.err.println("Error: Unknown generator '" + generatorName + "'. Supported generators: openapi, spring");
+            System.err.println("Error: Unknown generator '" + generatorName + "'. Supported generators: openapi, spring, restclient");
             return;
         }
 
@@ -81,13 +107,20 @@ public class Main {
                     .build();
             List<GeneratedFile> generatedFiles = generator.generate(restDsl);
 
-            Path outputPath = Paths.get(outputDirectory);
-            if (!Files.exists(outputPath)) {
-                Files.createDirectories(outputPath);
+            Path outputRoot = Paths.get(outputDirectory);
+            if (!Files.exists(outputRoot)) {
+                Files.createDirectories(outputRoot);
+            }
+
+            if (packageName != null) {
+                Path packagePath = outputRoot.resolve(packageName.replace('.', '/'));
+                if (!Files.exists(packagePath)) {
+                    Files.createDirectories(packagePath);
+                }
             }
 
             for (GeneratedFile file : generatedFiles) {
-                Path filePath = outputPath.resolve(file.name());
+                Path filePath = outputRoot.resolve(file.name());
                 Files.write(filePath, file.content().getBytes());
                 System.out.println("Generated: " + filePath);
             }

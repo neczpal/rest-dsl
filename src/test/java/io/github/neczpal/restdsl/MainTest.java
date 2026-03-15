@@ -51,7 +51,7 @@ public class MainTest {
 
     @Test
     public void testSimpleRsdl() throws IOException {
-        Path inputFile = Paths.get("src/test/resources/simple.rdsl");
+        Path inputFile = Paths.get("src/test/resources/simple/simple.rdsl");
         Path outputDir = tempDir.resolve("simple_output");
 
         assertTrue(Files.exists(inputFile), "Test resource simple.rdsl not found");
