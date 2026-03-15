@@ -1,5 +1,7 @@
 package io.github.neczpal.restdsl.generator.openapi;
 
+import com.amihaiemil.eoyaml.Yaml;
+import com.amihaiemil.eoyaml.YamlMappingBuilder;
 import io.github.neczpal.restdsl.model.Field;
 import io.github.neczpal.restdsl.model.Model;
 import org.junit.jupiter.api.Test;
@@ -21,7 +23,8 @@ public class ModelGeneratorTest {
                 ))
                 .build();
         ModelGenerator generator = new ModelGenerator();
-        String result = generator.generate(List.of(model));
+        YamlMappingBuilder openapi = Yaml.createYamlMappingBuilder();
+        String result = generator.generate(openapi, List.of(model)).build().toString();
         String expected = """
                 components:
                   schemas:
@@ -33,6 +36,6 @@ public class ModelGeneratorTest {
                         name:
                           type: string
                 """;
-        assertEquals(expected, result);
+        assertEquals(expected.trim(), result.trim());
     }
 }

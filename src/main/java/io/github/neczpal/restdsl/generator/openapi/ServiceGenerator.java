@@ -1,5 +1,10 @@
 package io.github.neczpal.restdsl.generator.openapi;
 
+import com.amihaiemil.eoyaml.Yaml;
+import com.amihaiemil.eoyaml.YamlMapping;
+import com.amihaiemil.eoyaml.YamlMappingBuilder;
+import com.amihaiemil.eoyaml.YamlNode;
+import com.amihaiemil.eoyaml.YamlSequenceBuilder;
 import io.github.neczpal.restdsl.model.Field;
 import io.github.neczpal.restdsl.model.Method;
 import io.github.neczpal.restdsl.model.Service;
@@ -11,32 +16,47 @@ import java.util.Map;
 
 public class ServiceGenerator {
 
-    public String generate(List<Service> services) {
+    public YamlMappingBuilder generate(YamlMappingBuilder openapi, List<Service> services) {
         if (services == null || services.isEmpty()) {
-            return "";
+            return openapi;
         }
 
         Map<String, List<Method>> methodsByPath = groupMethodsByPath(services);
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("paths:\n");
+        YamlMappingBuilder paths = Yaml.createYamlMappingBuilder();
 
         for (Map.Entry<String, List<Method>> entry : methodsByPath.entrySet()) {
             String path = entry.getKey();
             List<Method> methods = entry.getValue();
 
-            sb.append("  ").append(path).append(":\n");
-
+            YamlMappingBuilder pathMethods = Yaml.createYamlMappingBuilder();
             for (Method method : methods) {
-                sb.append("    ").append(method.verb().toLowerCase()).append(":\n");
-                sb.append("      summary: ").append(method.name()).append("\n");
-
-                generateParameters(sb, method);
-                generateRequestBody(sb, method);
-                generateResponses(sb, method);
+                pathMethods = pathMethods.add(
+                        method.verb().toLowerCase(),
+                        generateMethod(method)
+                );
             }
+            paths = paths.add(path, pathMethods.build());
         }
-        return sb.toString();
+        return openapi.add("paths", paths.build());
+    }
+
+    private YamlMapping generateMethod(Method method) {
+        YamlMappingBuilder methodBuilder = Yaml.createYamlMappingBuilder()
+                .add("summary", method.name());
+
+        YamlNode parameters = generateParameters(method);
+        if (parameters != null) {
+            methodBuilder = methodBuilder.add("parameters", parameters);
+        }
+
+        YamlNode requestBody = generateRequestBody(method);
+        if (requestBody != null) {
+            methodBuilder = methodBuilder.add("requestBody", requestBody);
+        }
+
+        methodBuilder = methodBuilder.add("responses", generateResponses(method));
+        return methodBuilder.build();
     }
 
     private Map<String, List<Method>> groupMethodsByPath(List<Service> services) {
@@ -52,89 +72,99 @@ public class ServiceGenerator {
         return methodsByPath;
     }
 
-    private void generateParameters(StringBuilder sb, Method method) {
+    private YamlNode generateParameters(Method method) {
         boolean hasPathParams = method.pathParams() != null && !method.pathParams().isEmpty();
         boolean hasQueryParams = method.queryParams() != null && !method.queryParams().isEmpty();
 
         if (!hasPathParams && !hasQueryParams) {
-            return;
+            return null;
         }
 
-        sb.append("      parameters:\n");
+        YamlSequenceBuilder parameters = Yaml.createYamlSequenceBuilder();
         if (hasPathParams) {
             for (Field param : method.pathParams()) {
-                sb.append("        - name: ").append(param.name()).append("\n");
-                sb.append("          in: path\n");
-                sb.append("          required: true\n");
-                sb.append("          schema:\n");
-                sb.append("            type: ").append(mapType(param.type())).append("\n");
+                parameters = parameters.add(
+                        Yaml.createYamlMappingBuilder()
+                                .add("name", param.name())
+                                .add("in", "path")
+                                .add("required", "true")
+                                .add("schema", Yaml.createYamlMappingBuilder().add("type", mapType(param.type())).build())
+                                .build()
+                );
             }
         }
         if (hasQueryParams) {
             for (Field param : method.queryParams()) {
-                sb.append("        - name: ").append(param.name()).append("\n");
-                sb.append("          in: query\n");
-                sb.append("          schema:\n");
-                sb.append("            type: ").append(mapType(param.type())).append("\n");
+                parameters = parameters.add(
+                        Yaml.createYamlMappingBuilder()
+                                .add("name", param.name())
+                                .add("in", "query")
+                                .add("schema", Yaml.createYamlMappingBuilder().add("type", mapType(param.type())).build())
+                                .build()
+                );
             }
         }
+        return parameters.build();
     }
 
-    private void generateRequestBody(StringBuilder sb, Method method) {
+    private YamlNode generateRequestBody(Method method) {
         if (method.bodyType() == null) {
-            return;
+            return null;
         }
-        sb.append("      requestBody:\n");
-        sb.append("        content:\n");
-        sb.append("          application/json:\n");
-        sb.append("            schema:\n");
-        generateSchemaType(sb, method.bodyType(), "              ");
+        return Yaml.createYamlMappingBuilder()
+                .add("content", Yaml.createYamlMappingBuilder()
+                        .add("application/json", Yaml.createYamlMappingBuilder()
+                                .add("schema", generateSchemaType(method.bodyType()))
+                                .build())
+                        .build())
+                .build();
     }
 
-    private void generateResponses(StringBuilder sb, Method method) {
-        sb.append("      responses:\n");
+    private YamlNode generateResponses(Method method) {
+        YamlMappingBuilder responses = Yaml.createYamlMappingBuilder();
         if (method.responses() == null || method.responses().isEmpty()) {
-            sb.append("        '200':\n");
-            sb.append("          description: OK\n");
-            return;
+            responses = responses.add(
+                    "200",
+                    Yaml.createYamlMappingBuilder().add("description", "OK").build()
+            );
+            return responses.build();
         }
 
         for (Map.Entry<Integer, String> entry : method.responses().entrySet()) {
             String responseValue = entry.getValue();
-            sb.append("        '").append(entry.getKey()).append("':\n");
+            YamlMappingBuilder response = Yaml.createYamlMappingBuilder();
 
             boolean isDescription = responseValue.startsWith("\"");
 
             if (isDescription) {
-                sb.append("          description: ").append(responseValue, 1, responseValue.length() - 1).append("\n");
+                response = response.add("description", responseValue.substring(1, responseValue.length() - 1));
             } else {
-                sb.append("          description: OK\n"); // Default description
-                sb.append("          content:\n");
-                sb.append("            application/json:\n");
-                sb.append("              schema:\n");
-                generateSchemaType(sb, responseValue, "                ");
+                response = response.add("description", "OK")
+                        .add("content", Yaml.createYamlMappingBuilder()
+                                .add("application/json", Yaml.createYamlMappingBuilder()
+                                        .add("schema", generateSchemaType(responseValue))
+                                        .build())
+                                .build());
             }
+            responses = responses.add(entry.getKey().toString(), response.build());
         }
+        return responses.build();
     }
 
-    private void generateSchemaType(StringBuilder sb, String type, String indentation) {
+    private YamlNode generateSchemaType(String type) {
         if (type.startsWith("[") && type.endsWith("]")) {
-            sb.append(indentation).append("type: array\n");
-            sb.append(indentation).append("items:\n");
             String innerType = type.substring(1, type.length() - 1);
-            generateSchemaType(sb, innerType, indentation + "  ");
+            return Yaml.createYamlMappingBuilder()
+                    .add("type", "array")
+                    .add("items", generateSchemaType(innerType))
+                    .build();
         } else {
-            switch (type) {
-                case "Int":
-                case "String":
-                case "Boolean":
-                case "Double":
-                    sb.append(indentation).append("type: ").append(mapType(type)).append("\n");
-                    break;
-                default: // Custom type
-                    sb.append(indentation).append("$ref: '#/components/schemas/").append(type).append("'\n");
-                    break;
-            }
+            return switch (type) {
+                case "Int", "String", "Boolean", "Double" ->
+                        Yaml.createYamlMappingBuilder().add("type", mapType(type)).build();
+                default -> // Custom type
+                        Yaml.createYamlMappingBuilder().add("$ref", "#/components/schemas/" + type).build();
+            };
         }
     }
 

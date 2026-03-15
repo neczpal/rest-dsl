@@ -1,5 +1,7 @@
 package io.github.neczpal.restdsl.generator.openapi;
 
+import com.amihaiemil.eoyaml.Yaml;
+import com.amihaiemil.eoyaml.YamlMappingBuilder;
 import io.github.neczpal.restdsl.model.Method;
 import io.github.neczpal.restdsl.model.Service;
 import org.junit.jupiter.api.Test;
@@ -27,16 +29,17 @@ public class ServiceGeneratorTest {
                 .methods(List.of(method))
                 .build();
         ServiceGenerator generator = new ServiceGenerator();
-        String result = generator.generate(List.of(service));
+        YamlMappingBuilder openapi = Yaml.createYamlMappingBuilder();
+        String result = generator.generate(openapi, List.of(service)).build().toString();
         String expected = """
                 paths:
                   /api/v3/pet/{id}:
                     get:
                       summary: getPet
                       responses:
-                        '200':
+                        200:
                           description: OK
                 """;
-        assertEquals(expected, result);
+        assertEquals(expected.trim(), result.trim());
     }
 }

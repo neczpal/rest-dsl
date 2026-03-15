@@ -1,48 +1,51 @@
 package io.github.neczpal.restdsl.generator.openapi;
 
+import com.amihaiemil.eoyaml.Yaml;
+import com.amihaiemil.eoyaml.YamlMappingBuilder;
+import com.amihaiemil.eoyaml.YamlNode;
 import io.github.neczpal.restdsl.model.Field;
 import io.github.neczpal.restdsl.model.Model;
 
 import java.util.List;
 
 public class ModelGenerator {
-    public String generate(List<Model> models) {
+    public YamlMappingBuilder generate(YamlMappingBuilder openapi, List<Model> models) {
         if (models == null || models.isEmpty()) {
-            return "";
+            return openapi;
         }
-        StringBuilder sb = new StringBuilder();
-        sb.append("components:\n");
-        sb.append("  schemas:\n");
+        YamlMappingBuilder schemas = Yaml.createYamlMappingBuilder();
         for (Model model : models) {
-            sb.append("    ").append(model.name()).append(":\n");
-            sb.append("      type: object\n");
-            sb.append("      properties:\n");
+            YamlMappingBuilder properties = Yaml.createYamlMappingBuilder();
             for (Field field : model.fields()) {
-                sb.append("        ").append(field.name()).append(":\n");
-                generateSchemaType(sb, field.type(), "          ");
+                properties = properties.add(field.name(), generateSchemaType(field.type()));
             }
+            schemas = schemas.add(
+                    model.name(),
+                    Yaml.createYamlMappingBuilder()
+                            .add("type", "object")
+                            .add("properties", properties.build())
+                            .build()
+            );
         }
-        return sb.toString();
+        return openapi.add("components", Yaml.createYamlMappingBuilder()
+                .add("schemas", schemas.build())
+                .build());
     }
 
-    private void generateSchemaType(StringBuilder sb, String type, String indentation) {
+    private YamlNode generateSchemaType(String type) {
         if (type.startsWith("[") && type.endsWith("]")) {
-            sb.append(indentation).append("type: array\n");
-            sb.append(indentation).append("items:\n");
             String innerType = type.substring(1, type.length() - 1);
-            generateSchemaType(sb, innerType, indentation + "  ");
+            return Yaml.createYamlMappingBuilder()
+                    .add("type", "array")
+                    .add("items", generateSchemaType(innerType))
+                    .build();
         } else {
-            switch (type) {
-                case "Int":
-                case "String":
-                case "Boolean":
-                case "Double":
-                    sb.append(indentation).append("type: ").append(mapType(type)).append("\n");
-                    break;
-                default: // Custom type
-                    sb.append(indentation).append("$ref: '#/components/schemas/").append(type).append("'\n");
-                    break;
-            }
+            return switch (type) {
+                case "Int", "String", "Boolean", "Double" ->
+                        Yaml.createYamlMappingBuilder().add("type", mapType(type)).build();
+                default -> // Custom type
+                        Yaml.createYamlMappingBuilder().add("$ref", "#/components/schemas/" + type).build();
+            };
         }
     }
 

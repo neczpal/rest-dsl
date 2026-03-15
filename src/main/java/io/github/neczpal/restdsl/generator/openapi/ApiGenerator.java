@@ -1,18 +1,27 @@
 package io.github.neczpal.restdsl.generator.openapi;
 
+import com.amihaiemil.eoyaml.Yaml;
+import com.amihaiemil.eoyaml.YamlMappingBuilder;
 import io.github.neczpal.restdsl.model.Api;
 
 public class ApiGenerator {
-    public String generate(Api api) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("openapi: 3.0.0\n");
-        sb.append("info:\n");
-        sb.append("  title: ").append(api.title() != null ? api.title() : api.name()).append("\n");
-        sb.append("  version: ").append(api.version() != null ? api.version() : "1.0.0").append("\n");
+    public YamlMappingBuilder generate(Api api) {
+        YamlMappingBuilder info = Yaml.createYamlMappingBuilder()
+                .add("title", api.title() != null ? api.title() : api.name())
+                .add("version", api.version() != null ? api.version() : "1.0.0");
+
+        YamlMappingBuilder openapi = Yaml.createYamlMappingBuilder()
+                .add("openapi", "3.0.0")
+                .add("info", info.build());
+
         if (api.base() != null) {
-            sb.append("servers:\n");
-            sb.append("  - url: ").append(api.base()).append("\n");
+            openapi = openapi.add(
+                    "servers",
+                    Yaml.createYamlSequenceBuilder()
+                            .add(Yaml.createYamlMappingBuilder().add("url", api.base()).build())
+                            .build()
+            );
         }
-        return sb.toString();
+        return openapi;
     }
 }

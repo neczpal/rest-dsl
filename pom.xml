@@ -12,12 +12,20 @@
         <antlr.version>4.13.2</antlr.version>
         <lombok.version>1.18.42</lombok.version>
         <javapoet.version>0.12.0</javapoet.version>
+        <eo-yaml.version>8.0.6</eo-yaml.version>
+        <spring.version>7.0.6</spring.version>
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.amihaiemil.web</groupId>
+            <artifactId>eo-yaml</artifactId>
+            <version>${eo-yaml.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
@@ -37,11 +45,10 @@
             <version>${javapoet.version}</version>
         </dependency>
 
-        <!-- Generated Sources -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-            <version>7.0.6</version>
+            <version>${spring.version}</version>
             <scope>compile</scope>
         </dependency>
 

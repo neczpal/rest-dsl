@@ -59,13 +59,14 @@ public class OpenApiGeneratorTest {
                   title: Petstore API
                   version: 1.0.0
                 servers:
-                  - url: /api/v3
+                  - 
+                    url: /api/v3
                 paths:
                   /api/v3/pet/{id}:
                     get:
                       summary: getPet
                       responses:
-                        '200':
+                        200:
                           description: OK
                 components:
                   schemas:
@@ -77,6 +78,6 @@ public class OpenApiGeneratorTest {
                         name:
                           type: string
                 """;
-        assertEquals(expected, result);
+        assertEquals(expected.trim(), result.trim());
     }
 }

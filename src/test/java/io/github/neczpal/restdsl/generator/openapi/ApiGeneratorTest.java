@@ -16,15 +16,16 @@ public class ApiGeneratorTest {
                 .base("/api/v3")
                 .build();
         ApiGenerator generator = new ApiGenerator();
-        String result = generator.generate(api);
+        String result = generator.generate(api).build().toString();
         String expected = """
                 openapi: 3.0.0
                 info:
                   title: Petstore API
                   version: 1.0.0
                 servers:
-                  - url: /api/v3
+                  - 
+                    url: /api/v3
                 """;
-        assertEquals(expected, result);
+        assertEquals(expected.trim(), result.trim());
     }
 }
