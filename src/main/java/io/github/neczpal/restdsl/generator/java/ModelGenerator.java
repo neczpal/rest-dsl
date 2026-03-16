@@ -1,10 +1,10 @@
 package io.github.neczpal.restdsl.generator.java;
 
-import com.palantir.javapoet.FieldSpec;
 import com.palantir.javapoet.JavaFile;
 import com.palantir.javapoet.MethodSpec;
 import com.palantir.javapoet.TypeName;
 import com.palantir.javapoet.TypeSpec;
+import com.palantir.javapoet.ParameterSpec;
 import io.github.neczpal.restdsl.generator.GeneratedFile;
 import io.github.neczpal.restdsl.model.Field;
 import io.github.neczpal.restdsl.model.Model;
@@ -41,30 +41,19 @@ public class ModelGenerator {
     }
 
     private String generateModelClass(Model model) throws IOException {
-        TypeSpec.Builder classBuilder = TypeSpec.classBuilder(model.name())
-                .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
-
-        MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
+        TypeSpec.Builder classBuilder = TypeSpec.recordBuilder(model.name())
                 .addModifiers(Modifier.PUBLIC);
+
+        MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder();
 
         for (Field field : model.fields()) {
             TypeName type = this.typeMapper.toJavaType(field.type());
             String name = field.name();
 
-            classBuilder.addField(FieldSpec.builder(type, name, Modifier.PRIVATE, Modifier.FINAL).build());
-            
-            constructorBuilder.addParameter(type, name);
-            constructorBuilder.addStatement("this.$N = $N", name, name);
-
-            // generate getter
-            classBuilder.addMethod(MethodSpec.methodBuilder(name)
-                    .addModifiers(Modifier.PUBLIC)
-                    .returns(type)
-                    .addStatement("return this.$N", name)
-                    .build());
+            constructorBuilder.addParameter(ParameterSpec.builder(type, name).build());
         }
 
-        classBuilder.addMethod(constructorBuilder.build());
+        classBuilder.recordConstructor(constructorBuilder.build());
 
         TypeSpec classSpec = classBuilder.build();
 
