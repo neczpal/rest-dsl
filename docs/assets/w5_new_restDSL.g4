@@ -1,4 +1,4 @@
-grammar RestDSL;
+grammar w5_new_restDSL;
 
 // --- PARSER RULES ---
 
@@ -150,7 +150,7 @@ anyId
     ;
 
 httpMethod
-    : GET | POST | PUT | DELETE | PATCH | HEAD | OPTIONS | TRACE | CONNECT
+    : GET | POST | PUT | DELETE | PATCH | HEAD | OPTIONS
     ;
 
 // --- LEXER RULES ---
@@ -173,8 +173,6 @@ DELETE  : 'delete' ;
 PATCH   : 'patch' ;
 HEAD    : 'head' ;
 OPTIONS : 'options' ;
-TRACE   : 'trace' ;
-CONNECT : 'connect' ;
 
 // Primitive type
 STRING_TYPE   : 'String';
