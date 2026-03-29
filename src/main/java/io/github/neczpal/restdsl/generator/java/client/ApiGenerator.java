@@ -2,11 +2,11 @@ package io.github.neczpal.restdsl.generator.java.client;
 
 import com.palantir.javapoet.CodeBlock;
 import com.palantir.javapoet.FieldSpec;
-import com.palantir.javapoet.JavaFile;
 import com.palantir.javapoet.MethodSpec;
 import com.palantir.javapoet.TypeName;
 import com.palantir.javapoet.TypeSpec;
 import io.github.neczpal.restdsl.generator.GeneratedFile;
+import io.github.neczpal.restdsl.generator.java.JavaFileGenerator;
 import io.github.neczpal.restdsl.generator.java.TypeMapper;
 import io.github.neczpal.restdsl.model.Field;
 import io.github.neczpal.restdsl.model.Method;
@@ -65,10 +65,7 @@ public class ApiGenerator {
         }
 
         TypeSpec client = clientBuilder.build();
-        JavaFile javaFile = JavaFile.builder(packageName, client).build();
-        StringBuilder sb = new StringBuilder();
-        javaFile.writeTo(sb);
-        return sb.toString();
+        return JavaFileGenerator.generate(packageName, client);
     }
 
     private MethodSpec generateEndpoint(Method endpoint) {

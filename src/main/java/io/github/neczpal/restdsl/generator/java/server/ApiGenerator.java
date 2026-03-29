@@ -2,6 +2,7 @@ package io.github.neczpal.restdsl.generator.java.server;
 
 import com.palantir.javapoet.*;
 import io.github.neczpal.restdsl.generator.GeneratedFile;
+import io.github.neczpal.restdsl.generator.java.JavaFileGenerator;
 import io.github.neczpal.restdsl.generator.java.TypeMapper;
 import io.github.neczpal.restdsl.model.Field;
 import io.github.neczpal.restdsl.model.Method;
@@ -62,11 +63,7 @@ public class ApiGenerator {
 
         TypeSpec controller = controllerBuilder.build();
 
-        JavaFile javaFile = JavaFile.builder(packageName, controller)
-                .build();
-        StringBuilder sb = new StringBuilder();
-        javaFile.writeTo(sb);
-        return sb.toString();
+        return JavaFileGenerator.generate(packageName, controller);
     }
 
     private MethodSpec generateMethod(Method method) {

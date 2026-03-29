@@ -1,6 +1,5 @@
 package io.github.neczpal.restdsl.generator.java;
 
-import com.palantir.javapoet.JavaFile;
 import com.palantir.javapoet.MethodSpec;
 import com.palantir.javapoet.TypeName;
 import com.palantir.javapoet.TypeSpec;
@@ -57,9 +56,6 @@ public class ModelGenerator {
 
         TypeSpec classSpec = classBuilder.build();
 
-        JavaFile javaFile = JavaFile.builder(this.packageName, classSpec).build();
-        StringBuilder sb = new StringBuilder();
-        javaFile.writeTo(sb);
-        return sb.toString();
+        return JavaFileGenerator.generate(this.packageName, classSpec);
     }
 }
