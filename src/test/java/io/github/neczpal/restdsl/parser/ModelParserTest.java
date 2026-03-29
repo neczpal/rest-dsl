@@ -7,6 +7,8 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ModelParserTest {
@@ -14,20 +16,32 @@ public class ModelParserTest {
     @Test
     public void testSimpleModelDefinition() {
         String input = """
-                model Person {
-                    id: Int
-                    name: String
-                    height: Double
-                    isDead: Boolean
+                api Test {
+                    models {
+                        Person {
+                            id: Int
+                            name: String
+                            height: Double
+                            isDead: Boolean
+                        }
+                    }
                 }
         """;
 
         RestDSLLexer lexer = new RestDSLLexer(CharStreams.fromString(input));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         RestDSLParser parser = new RestDSLParser(tokens);
-        RestDSLParser.ModelDefinitionContext modelDefinition = parser.file().definition(0).modelDefinition();
+        RestDSLParser.ApiDefinitionContext apiDefinition = parser.file().apiDefinition(0);
+        RestDSLParser.ModelsDefinitionContext modelsDefinition = null;
+        for (RestDSLParser.ApiElementContext element : apiDefinition.apiElement()) {
+            if (element.modelsDefinition() != null) {
+                modelsDefinition = element.modelsDefinition();
+            }
+        }
 
-        Model model = new ModelParser().parse(modelDefinition);
+        List<Model> models = new ModelParser().parse(modelsDefinition);
+        assertEquals(1, models.size());
+        Model model = models.get(0);
         assertEquals("Person", model.name());
         assertEquals(4, model.fields().size());
         assertEquals("id", model.fields().get(0).name());

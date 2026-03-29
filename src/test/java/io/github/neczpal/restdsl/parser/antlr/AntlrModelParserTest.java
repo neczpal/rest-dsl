@@ -13,11 +13,13 @@ public class AntlrModelParserTest {
     @Test
     public void testSimpleModelDefinition() {
         String input = """
-                model Person {
-                    id: Int
-                    name: String
-                    height: Double
-                    isDead: Boolean
+                api Test {
+                    models {
+                        Person {
+                            id: Int,
+                            name: String
+                        }
+                    }
                 }
         """;
 
@@ -27,17 +29,21 @@ public class AntlrModelParserTest {
 
         RestDSLParser.FileContext fileContext = parser.file();
 
-        assertEquals(1, fileContext.definition().size());
-        RestDSLParser.ModelDefinitionContext modelContext = fileContext.definition(0).modelDefinition();
-        assertEquals("Person", modelContext.ID().getText());
-        assertEquals(4, modelContext.field().size());
-        assertEquals("id", modelContext.field(0).ID().getText());
-        assertEquals("Int", modelContext.field(0).type().getText());
-        assertEquals("name", modelContext.field(1).ID().getText());
-        assertEquals("String", modelContext.field(1).type().getText());
-        assertEquals("height", modelContext.field(2).ID().getText());
-        assertEquals("Double", modelContext.field(2).type().getText());
-        assertEquals("isDead", modelContext.field(3).ID().getText());
-        assertEquals("Boolean", modelContext.field(3).type().getText());
+        RestDSLParser.ApiDefinitionContext apiContext = fileContext.apiDefinition(0);
+        RestDSLParser.ModelsDefinitionContext modelsContext = null;
+        for (RestDSLParser.ApiElementContext elem : apiContext.apiElement()) {
+            if (elem.modelsDefinition() != null) {
+                modelsContext = elem.modelsDefinition();
+            }
+        }
+        
+        assertEquals(1, modelsContext.modelDefinition().size());
+        RestDSLParser.ModelDefinitionContext modelContext = modelsContext.modelDefinition(0);
+        assertEquals("Person", modelContext.CAPITAL_ID().getText());
+        assertEquals(2, modelContext.modelBlock().field().size());
+        assertEquals("id", modelContext.modelBlock().field(0).anyId().getText());
+        assertEquals("Int", modelContext.modelBlock().field(0).type().getText());
+        assertEquals("name", modelContext.modelBlock().field(1).anyId().getText());
+        assertEquals("String", modelContext.modelBlock().field(1).type().getText());
     }
 }

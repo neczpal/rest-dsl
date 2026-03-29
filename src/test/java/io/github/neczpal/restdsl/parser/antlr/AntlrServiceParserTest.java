@@ -13,14 +13,10 @@ public class AntlrServiceParserTest {
     @Test
     public void testServiceDefinition() {
         String input = """
-                service Pet {
-                    base: "/pet"
-
-                    post addPet {
-                        body: Pet
-                        responses: {
-                            200: Pet
-                            405: "Invalid input"
+                api Test {
+                    paths {
+                        /pet {
+                            post addPet(body: Pet) -> Pet
                         }
                     }
                 }
@@ -32,9 +28,20 @@ public class AntlrServiceParserTest {
 
         RestDSLParser.FileContext fileContext = parser.file();
 
-        assertEquals(1, fileContext.definition().size());
-        RestDSLParser.ServiceDefinitionContext serviceContext = fileContext.definition(0).serviceDefinition();
-        assertEquals("Pet", serviceContext.ID().getText());
-        assertEquals(2, serviceContext.serviceElement().size());
+        RestDSLParser.ApiDefinitionContext apiContext = fileContext.apiDefinition(0);
+        RestDSLParser.PathsDefinitionContext pathsContext = null;
+        for (RestDSLParser.ApiElementContext elem : apiContext.apiElement()) {
+            if (elem.pathsDefinition() != null) {
+                pathsContext = elem.pathsDefinition();
+            }
+        }
+        
+        assertEquals(1, pathsContext.pathElement().size());
+        RestDSLParser.PathDefinitionContext pathContext = pathsContext.pathElement(0).pathDefinition();
+        assertEquals("/pet", pathContext.PATH_ID().getText());
+        assertEquals(1, pathContext.pathBlock().pathElement().size());
+        RestDSLParser.EndpointDefinitionContext endpointContext = pathContext.pathBlock().pathElement(0).endpointDefinition();
+        assertEquals("post", endpointContext.httpMethod().getText());
+        assertEquals("addPet", endpointContext.anyId().getText());
     }
 }

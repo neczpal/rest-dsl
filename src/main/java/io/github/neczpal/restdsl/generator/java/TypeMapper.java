@@ -20,6 +20,7 @@ public class TypeMapper {
             case "String" -> ClassName.get(String.class);
             case "Boolean" -> ClassName.get(Boolean.class);
             case "Double" -> ClassName.get(Double.class);
+            case "Void" -> TypeName.VOID;
             default -> ClassName.bestGuess(dslType);
         };
     }

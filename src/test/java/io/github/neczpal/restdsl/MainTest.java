@@ -17,22 +17,27 @@ public class MainTest {
 
     @Test
     public void testMain() throws IOException {
-        Path inputFile = tempDir.resolve("test.rsdl");
+        Path inputFile = tempDir.resolve("test.rdsl");
         Path outputDir = tempDir.resolve("output");
 
         String rsdlContent = """
                 api Petstore {
-                    version: "1.0.0"
-                    base: "/api/v3"
-                }
-                model User {
-                    id: Int
-                    name: String
-                }
-                service PetService {
-                    base: "/pet"
-                    get getPet {
-                        path: "/{id}"
+                    meta {
+                        version: "1.0.0"
+                        basePath: "/api/v3"
+                    }
+                    models {
+                        User {
+                            id: Int
+                            name: String
+                        }
+                    }
+                    paths {
+                        /pet {
+                            /:id {
+                                get getPet -> User
+                            }
+                        }
                     }
                 }
         """;
@@ -69,7 +74,6 @@ public class MainTest {
         assertTrue(content.contains("User"));
         assertTrue(content.contains("ApiResponse"));
         assertTrue(content.contains("/pet"));
-        assertTrue(content.contains("addPet"));
         assertTrue(content.contains("updatePet"));
         assertTrue(content.contains("findByStatus"));
     }

@@ -75,7 +75,7 @@ public class ApiGenerator {
 
         MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(methodName)
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-                .returns(ParameterizedTypeName.get(ClassName.get(ResponseEntity.class), returnType));
+                .returns(ParameterizedTypeName.get(ClassName.get(ResponseEntity.class), returnType.box()));
 
         // Add mapping annotation
         methodBuilder.addAnnotation(getMappingAnnotation(method));
@@ -129,12 +129,12 @@ public class ApiGenerator {
 
     private TypeName determineReturnType(Method method) {
         if (method.responses() == null || !method.responses().containsKey(200)) {
-            return TypeName.get(Void.class);
+            return TypeName.VOID;
         }
 
         String responseType = method.responses().get(200);
-        if (responseType == null || responseType.trim().isEmpty() || responseType.startsWith("\"")) {
-            return TypeName.get(Void.class);
+        if (responseType == null || responseType.trim().isEmpty() || responseType.equals("Void")) {
+            return TypeName.VOID;
         }
 
         return typeMapper.toJavaType(responseType);

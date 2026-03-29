@@ -14,9 +14,10 @@ public class AntlrApiParserTest {
     public void testApiDefinition() {
         String input = """
                 api Petstore {
-                    title: "Petstore"
-                    version: "1.0.27"
-                    base: "/api/v3"
+                    meta {
+                        version: "1.0.0"
+                        basePath: "/api/v3"
+                    }
                 }
         """;
 
@@ -26,8 +27,8 @@ public class AntlrApiParserTest {
 
         RestDSLParser.FileContext fileContext = parser.file();
 
-        assertEquals(1, fileContext.definition().size());
-        RestDSLParser.ApiDefinitionContext apiContext = fileContext.definition(0).apiDefinition();
-        assertEquals("Petstore", apiContext.ID().getText());
+        assertEquals(1, fileContext.apiDefinition().size());
+        RestDSLParser.ApiDefinitionContext apiContext = fileContext.apiDefinition(0);
+        assertEquals("Petstore", apiContext.CAPITAL_ID().getText());
     }
 }

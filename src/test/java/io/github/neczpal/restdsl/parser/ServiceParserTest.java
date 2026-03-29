@@ -7,6 +7,8 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ServiceParserTest {
@@ -14,14 +16,13 @@ public class ServiceParserTest {
     @Test
     public void testServiceDefinition() {
         String input = """
-                service Pet {
-                    base: "/pet"
-
-                    post addPet {
-                        body: Pet
-                        responses: {
-                            200: Pet
-                            405: "Invalid input"
+                api Test {
+                    paths {
+                        /pet {
+                            post addPet(body: Pet) {
+                                response { 200 -> Pet }
+                                error { 405 -> ApiResponse }
+                            }
                         }
                     }
                 }
@@ -30,9 +31,17 @@ public class ServiceParserTest {
         RestDSLLexer lexer = new RestDSLLexer(CharStreams.fromString(input));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         RestDSLParser parser = new RestDSLParser(tokens);
-        RestDSLParser.ServiceDefinitionContext serviceDefinition = parser.file().definition(0).serviceDefinition();
+        RestDSLParser.ApiDefinitionContext apiDefinition = parser.file().apiDefinition(0);
+        RestDSLParser.PathsDefinitionContext pathsDefinition = null;
+        for (RestDSLParser.ApiElementContext element : apiDefinition.apiElement()) {
+            if (element.pathsDefinition() != null) {
+                pathsDefinition = element.pathsDefinition();
+            }
+        }
 
-        Service service = new ServiceParser().parse(serviceDefinition);
+        List<Service> services = new ServiceParser().parse(pathsDefinition);
+        assertEquals(1, services.size());
+        Service service = services.get(0);
         assertEquals("Pet", service.name());
         assertEquals("/pet", service.base());
         assertEquals(1, service.methods().size());
@@ -41,29 +50,27 @@ public class ServiceParserTest {
         assertEquals("Pet", service.methods().getFirst().bodyType());
         assertEquals(2, service.methods().getFirst().responses().size());
         assertEquals("Pet", service.methods().getFirst().responses().get(200));
-        assertEquals("\"Invalid input\"", service.methods().getFirst().responses().get(405));
+        assertEquals("ApiResponse", service.methods().getFirst().responses().get(405));
     }
 
     @Test
     public void testMultipleMethods() {
         String input = """
-                service Pet {
-                    base: "/pet"
+                api Test {
+                    paths {
+                        /pet {
+                            post addPet(body: Pet) {
+                                response { 200 -> Pet }
+                                error { 405 -> ApiResponse }
+                            }
 
-                    post addPet {
-                        body: Pet
-                        responses: {
-                            200: Pet
-                            405: "Invalid input"
-                        }
-                    }
-
-                    put updatePet {
-                        body: Pet
-                        responses: {
-                            200: Pet
-                            400: "Invalid ID supplied"
-                            404: "Pet not found"
+                            put updatePet(body: Pet) {
+                                response { 200 -> Pet }
+                                error { 
+                                    400 -> ApiResponse 
+                                    404 -> ApiResponse 
+                                }
+                            }
                         }
                     }
                 }
@@ -72,9 +79,17 @@ public class ServiceParserTest {
         RestDSLLexer lexer = new RestDSLLexer(CharStreams.fromString(input));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         RestDSLParser parser = new RestDSLParser(tokens);
-        RestDSLParser.ServiceDefinitionContext serviceDefinition = parser.file().definition(0).serviceDefinition();
+        RestDSLParser.ApiDefinitionContext apiDefinition = parser.file().apiDefinition(0);
+        RestDSLParser.PathsDefinitionContext pathsDefinition = null;
+        for (RestDSLParser.ApiElementContext element : apiDefinition.apiElement()) {
+            if (element.pathsDefinition() != null) {
+                pathsDefinition = element.pathsDefinition();
+            }
+        }
 
-        Service service = new ServiceParser().parse(serviceDefinition);
+        List<Service> services = new ServiceParser().parse(pathsDefinition);
+        assertEquals(1, services.size());
+        Service service = services.get(0);
         assertEquals("Pet", service.name());
         assertEquals("/pet", service.base());
         assertEquals(2, service.methods().size());
@@ -84,14 +99,14 @@ public class ServiceParserTest {
         assertEquals("Pet", service.methods().getFirst().bodyType());
         assertEquals(2, service.methods().getFirst().responses().size());
         assertEquals("Pet", service.methods().getFirst().responses().get(200));
-        assertEquals("\"Invalid input\"", service.methods().getFirst().responses().get(405));
+        assertEquals("ApiResponse", service.methods().getFirst().responses().get(405));
 
         assertEquals("updatePet", service.methods().get(1).name());
         assertEquals("put", service.methods().get(1).verb());
         assertEquals("Pet", service.methods().get(1).bodyType());
         assertEquals(3, service.methods().get(1).responses().size());
         assertEquals("Pet", service.methods().get(1).responses().get(200));
-        assertEquals("\"Invalid ID supplied\"", service.methods().get(1).responses().get(400));
-        assertEquals("\"Pet not found\"", service.methods().get(1).responses().get(404));
+        assertEquals("ApiResponse", service.methods().get(1).responses().get(400));
+        assertEquals("ApiResponse", service.methods().get(1).responses().get(404));
     }
 }

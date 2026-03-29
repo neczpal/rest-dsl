@@ -22,21 +22,22 @@ public class OpenApiYamlIT {
         Path rsdlFile = tempDir.resolve("simple.rdsl");
         String rsdlContent = """
                 api Simple {
-                    version: "1.0.0"
-                    base: "/api"
-                }
-                model Greeting {
-                    message: String
-                }
-                service GreeterService {
-                    base: "/greeter"
-                    get sayHello {
-                        path: "/hello/{name}"
-                        pathParams: {
-                            name: String
+                    meta {
+                        version: "1.0.0"
+                        basePath: "/api"
+                    }
+                    models {
+                        Greeting {
+                            message: String
                         }
-                        responses: {
-                            200: Greeting
+                    }
+                    paths {
+                        /greeter {
+                            /hello {
+                                /:name {
+                                    get sayHello -> Greeting
+                                }
+                            }
                         }
                     }
                 }

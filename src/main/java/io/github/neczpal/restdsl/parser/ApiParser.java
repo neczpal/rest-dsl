@@ -5,18 +5,24 @@ import io.github.neczpal.restdsl.model.Api;
 
 public class ApiParser {
     public Api parse(RestDSLParser.ApiDefinitionContext ctx) {
-        String name = ctx.ID().getText();
-        String title = null;
+        String name = ctx.CAPITAL_ID().getText();
+        String title = name;
         String version = null;
         String base = null;
 
-        for (RestDSLParser.ApiPropertiesContext prop : ctx.apiProperties()) {
-            if (prop instanceof RestDSLParser.TitlePropContext) {
-                title = ((RestDSLParser.TitlePropContext) prop).STRING().getText().replace("\"", "");
-            } else if (prop instanceof RestDSLParser.VersionPropContext) {
-                version = ((RestDSLParser.VersionPropContext) prop).STRING().getText().replace("\"", "");
-            } else if (prop instanceof RestDSLParser.BasePropContext) {
-                base = ((RestDSLParser.BasePropContext) prop).STRING().getText().replace("\"", "");
+        for (RestDSLParser.ApiElementContext element : ctx.apiElement()) {
+            if (element.metaDefinition() != null) {
+                for (RestDSLParser.MetaFieldContext field : element.metaDefinition().metaField()) {
+                    String fieldName = field.anyId().getText();
+                    String fieldValue = field.metaValue().getText().replace("\"", "");
+                    if ("title".equals(fieldName)) {
+                        title = fieldValue;
+                    } else if ("version".equals(fieldName)) {
+                        version = fieldValue;
+                    } else if ("basePath".equals(fieldName) || "base".equals(fieldName)) {
+                        base = fieldValue;
+                    }
+                }
             }
         }
         return Api.builder()

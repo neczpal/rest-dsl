@@ -85,13 +85,14 @@ public class Main {
             List<Model> models = new ArrayList<>();
             List<Service> services = new ArrayList<>();
 
-            for (RestDSLParser.DefinitionContext def : tree.definition()) {
-                if (def.apiDefinition() != null) {
-                    api = apiParser.parse(def.apiDefinition());
-                } else if (def.modelDefinition() != null) {
-                    models.add(modelParser.parse(def.modelDefinition()));
-                } else if (def.serviceDefinition() != null) {
-                    services.add(serviceParser.parse(def.serviceDefinition()));
+            for (RestDSLParser.ApiDefinitionContext def : tree.apiDefinition()) {
+                api = apiParser.parse(def);
+                for (RestDSLParser.ApiElementContext element : def.apiElement()) {
+                    if (element.modelsDefinition() != null) {
+                        models.addAll(modelParser.parse(element.modelsDefinition()));
+                    } else if (element.pathsDefinition() != null) {
+                        services.addAll(serviceParser.parse(element.pathsDefinition()));
+                    }
                 }
             }
 

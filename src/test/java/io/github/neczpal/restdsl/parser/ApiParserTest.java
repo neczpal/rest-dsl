@@ -15,16 +15,18 @@ public class ApiParserTest {
     public void testApiDefinition() {
         String input = """
                 api Petstore {
-                    title: "Petstore"
-                    version: "1.0.27"
-                    base: "/api/v3"
+                    meta {
+                        title: "Petstore"
+                        version: "1.0.27"
+                        basePath: "/api/v3"
+                    }
                 }
         """;
 
         RestDSLLexer lexer = new RestDSLLexer(CharStreams.fromString(input));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         RestDSLParser parser = new RestDSLParser(tokens);
-        RestDSLParser.ApiDefinitionContext apiDefinition = parser.file().definition(0).apiDefinition();
+        RestDSLParser.ApiDefinitionContext apiDefinition = parser.file().apiDefinition(0);
 
         Api api = new ApiParser().parse(apiDefinition);
         assertEquals("Petstore", api.name());

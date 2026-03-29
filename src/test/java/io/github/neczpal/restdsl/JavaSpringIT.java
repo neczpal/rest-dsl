@@ -30,22 +30,21 @@ public class JavaSpringIT {
         Path rsdlFile = tempDir.resolve("petstore.rdsl");
         String rsdlContent = """
                 api Petstore {
-                    version: "1.0.0"
-                    base: "/api/v3"
-                }
-                model Pet {
-                    id: Int
-                    name: String
-                }
-                service PetService {
-                    base: "/pet"
-                    get getPetById {
-                        path: "/{id}"
-                        pathParams: {
+                    meta {
+                        version: "1.0.0"
+                        basePath: "/api/v3"
+                    }
+                    models {
+                        Pet {
                             id: Int
+                            name: String
                         }
-                        responses: {
-                            200: Pet
+                    }
+                    paths {
+                        /pet {
+                            /:id {
+                                get getPetById -> Pet
+                            }
                         }
                     }
                 }
@@ -84,7 +83,7 @@ public class JavaSpringIT {
         URLClassLoader serverClassLoader = new URLClassLoader(new URL[]{serverOutputDir.toUri().toURL()});
         URLClassLoader clientClassLoader = new URLClassLoader(new URL[]{clientOutputDir.toUri().toURL(), serverOutputDir.toUri().toURL()});
 
-        Class<?> petServiceApi = serverClassLoader.loadClass(packageName + ".PetServiceApi");
+        Class<?> petServiceApi = serverClassLoader.loadClass(packageName + ".PetApi");
         Class<?> pet = serverClassLoader.loadClass(packageName + ".Pet");
 
         // 5. Create dummy implementation

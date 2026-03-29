@@ -19,6 +19,8 @@ api Petstore {
                 // 'petId' is available to all methods below
                 get -> Pet, error: 404
 
+                // You can set return code instead of type in that case return body will be empty with the given status code
+                // For both response and error
                 delete -> 200, error: 400
 
                 // Structured Block for the complex update
