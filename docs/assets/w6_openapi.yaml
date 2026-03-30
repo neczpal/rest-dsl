@@ -1,0 +1,192 @@
+openapi: 3.0.1
+info:
+  title: Petstore
+  version: 1.0.0
+servers:
+- url: /api/v3
+paths:
+  /pet:
+    put:
+      summary: updatePet
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Pet"
+      responses:
+        "400":
+          description: Error
+        "404":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pet"
+    post:
+      summary: post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Pet"
+      responses:
+        "405":
+          description: Error
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pet"
+  /pet/findByStatus:
+    get:
+      summary: getFindByStatus
+      parameters:
+      - name: status
+        in: query
+        schema:
+          type: string
+      responses:
+        "400":
+          description: Error
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Pet"
+  /pet/{petId}:
+    get:
+      summary: getByPetId
+      parameters:
+      - name: petId
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        "404":
+          description: Error
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pet"
+    post:
+      summary: updateWithForm
+      parameters:
+      - name: petId
+        in: path
+        required: true
+        schema:
+          type: integer
+      - name: name
+        in: query
+        schema:
+          type: string
+      - name: status
+        in: query
+        schema:
+          type: string
+      responses:
+        "400":
+          description: Error
+        "403":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "404":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pet"
+    delete:
+      summary: deleteByPetId
+      parameters:
+      - name: petId
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        "400":
+          description: Error
+        "200":
+          description: Ok
+components:
+  schemas:
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+    Pet:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        category:
+          $ref: "#/components/schemas/Category"
+        status:
+          type: string
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+        petId:
+          type: integer
+        quantity:
+          type: integer
+        complete:
+          type: boolean
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        password:
+          type: string
+        phone:
+          type: string
+        userStatus:
+          type: integer
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+        type:
+          type: string
+        message:
+          type: string
