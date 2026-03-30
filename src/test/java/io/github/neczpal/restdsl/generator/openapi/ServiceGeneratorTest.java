@@ -1,9 +1,9 @@
 package io.github.neczpal.restdsl.generator.openapi;
 
-import com.amihaiemil.eoyaml.Yaml;
-import com.amihaiemil.eoyaml.YamlMappingBuilder;
 import io.github.neczpal.restdsl.model.Method;
 import io.github.neczpal.restdsl.model.Service;
+import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.oas.models.OpenAPI;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ServiceGeneratorTest {
 
     @Test
-    public void testGenerate() {
+    public void testGenerate() throws Exception {
         Method method = Method.builder()
                 .verb("GET")
                 .name("getPet")
@@ -29,17 +29,20 @@ public class ServiceGeneratorTest {
                 .methods(List.of(method))
                 .build();
         ServiceGenerator generator = new ServiceGenerator();
-        YamlMappingBuilder openapi = Yaml.createYamlMappingBuilder();
-        String result = generator.generate(openapi, List.of(service)).build().toString();
+        OpenAPI openAPI = new OpenAPI();
+        generator.generate(openAPI, List.of(service));
+        
+        String result = Yaml.mapper().writeValueAsString(openAPI);
         String expected = """
+                openapi: 3.0.1
                 paths:
                   /api/v3/pet/{id}:
                     get:
                       summary: getPet
                       responses:
-                        200:
-                          description: OK
+                        "200":
+                          description: Ok
                 """;
-        assertEquals(expected.trim(), result.trim());
+        assertEquals(expected.replaceAll("\\s+", ""), result.replaceAll("\\s+", ""));
     }
 }

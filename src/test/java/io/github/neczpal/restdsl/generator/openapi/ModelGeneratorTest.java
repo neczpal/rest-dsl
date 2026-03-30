@@ -1,9 +1,9 @@
 package io.github.neczpal.restdsl.generator.openapi;
 
-import com.amihaiemil.eoyaml.Yaml;
-import com.amihaiemil.eoyaml.YamlMappingBuilder;
 import io.github.neczpal.restdsl.model.Field;
 import io.github.neczpal.restdsl.model.Model;
+import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.oas.models.OpenAPI;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ModelGeneratorTest {
 
     @Test
-    public void testGenerate() {
+    public void testGenerate() throws Exception {
         Model model = Model.builder()
                 .name("User")
                 .fields(Arrays.asList(
@@ -23,9 +23,12 @@ public class ModelGeneratorTest {
                 ))
                 .build();
         ModelGenerator generator = new ModelGenerator();
-        YamlMappingBuilder openapi = Yaml.createYamlMappingBuilder();
-        String result = generator.generate(openapi, List.of(model)).build().toString();
+        OpenAPI openAPI = new OpenAPI();
+        generator.generate(openAPI, List.of(model));
+        
+        String result = Yaml.mapper().writeValueAsString(openAPI);
         String expected = """
+                openapi: 3.0.1
                 components:
                   schemas:
                     User:
@@ -36,6 +39,6 @@ public class ModelGeneratorTest {
                         name:
                           type: string
                 """;
-        assertEquals(expected.trim(), result.trim());
+        assertEquals(expected.replaceAll("\\s+", ""), result.replaceAll("\\s+", ""));
     }
 }

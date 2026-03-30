@@ -12,7 +12,7 @@
         <antlr.version>4.13.2</antlr.version>
         <lombok.version>1.18.42</lombok.version>
         <javapoet.version>0.12.0</javapoet.version>
-        <eo-yaml.version>8.0.6</eo-yaml.version>
+        <swagger-openapi-models.version>2.2.45</swagger-openapi-models.version>
         <spring.version>7.0.6</spring.version>
         <networknt-openapi-parser.version>2.3.3</networknt-openapi-parser.version>
         <maven.compiler.source>25</maven.compiler.source>
@@ -21,12 +21,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>com.amihaiemil.web</groupId>
-            <artifactId>eo-yaml</artifactId>
-            <version>${eo-yaml.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
@@ -47,12 +41,17 @@
         </dependency>
 
         <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-core</artifactId>
+            <version>${swagger-openapi-models.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>${spring.version}</version>
             <scope>compile</scope>
         </dependency>
-
 
         <!-- TEST -->
         <dependency>

@@ -1,29 +1,37 @@
 package io.github.neczpal.restdsl.generator.openapi;
 
-import com.amihaiemil.eoyaml.YamlMappingBuilder;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.neczpal.restdsl.generator.GeneratedFile;
 import io.github.neczpal.restdsl.generator.Generator;
 import io.github.neczpal.restdsl.model.RestDsl;
+import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.oas.models.OpenAPI;
 
 import java.util.List;
 
 public class OpenApiGenerator implements Generator {
-    private final ApiGenerator apiGenerator;
+    private final MetaInfoGenerator metaInfoGenerator;
     private final ModelGenerator modelGenerator;
     private final ServiceGenerator serviceGenerator;
 
     public OpenApiGenerator() {
-        this.apiGenerator = new ApiGenerator();
+        this.metaInfoGenerator = new MetaInfoGenerator();
         this.modelGenerator = new ModelGenerator();
         this.serviceGenerator = new ServiceGenerator();
     }
 
     @Override
     public List<GeneratedFile> generate(RestDsl restDsl) {
-        YamlMappingBuilder openapiBuilder = apiGenerator.generate(restDsl.api());
-        openapiBuilder = serviceGenerator.generate(openapiBuilder, restDsl.services());
-        openapiBuilder = modelGenerator.generate(openapiBuilder, restDsl.models());
+        OpenAPI openAPI = new OpenAPI();
+        metaInfoGenerator.generate(openAPI, restDsl.api());
+        serviceGenerator.generate(openAPI, restDsl.services());
+        modelGenerator.generate(openAPI, restDsl.models());
 
-        return List.of(new GeneratedFile("openapi.yaml", openapiBuilder.build().toString()));
+        try {
+            String openapiYaml = Yaml.mapper().writeValueAsString(openAPI);
+            return List.of(new GeneratedFile("openapi.yaml", openapiYaml));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to serialize OpenAPI to YAML", e);
+        }
     }
 }

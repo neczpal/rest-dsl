@@ -48,7 +48,7 @@ public class MainTest {
         Path outputFile = outputDir.resolve("openapi.yaml");
         assertTrue(Files.exists(outputFile));
         String content = new String(Files.readAllBytes(outputFile));
-        assertTrue(content.contains("openapi: 3.0.0"));
+        assertTrue(content.contains("openapi: 3.0.1"));
         assertTrue(content.contains("Petstore"));
         assertTrue(content.contains("User"));
         assertTrue(content.contains("getPet"));
@@ -66,7 +66,7 @@ public class MainTest {
         Path outputFile = outputDir.resolve("openapi.yaml");
         assertTrue(Files.exists(outputFile));
         String content = new String(Files.readAllBytes(outputFile));
-        assertTrue(content.contains("openapi: 3.0.0"));
+        assertTrue(content.contains("openapi: 3.0.1"));
         assertTrue(content.contains("Petstore"));
         assertTrue(content.contains("Pet"));
         assertTrue(content.contains("Category"));
