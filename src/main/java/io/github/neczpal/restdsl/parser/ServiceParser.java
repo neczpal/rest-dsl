@@ -53,9 +53,7 @@ public class ServiceParser {
         for (RestDSLParser.PathElementContext elem : ctx.pathElement()) {
             if (elem.pathDefinition() != null) {
                 String subPath = elem.pathDefinition().PATH_ID().getText();
-                if (subPath.startsWith("/:")) {
-                    subPath = "/{" + subPath.substring(2) + "}";
-                }
+                subPath = subPath.replaceAll("/:([a-zA-Z0-9_]+)", "/{$1}");
                 parsePathBlock(elem.pathDefinition().pathBlock(), currentPath + subPath, methods);
             } else if (elem.endpointDefinition() != null) {
                 methods.add(parseMethod(elem.endpointDefinition(), currentPath));

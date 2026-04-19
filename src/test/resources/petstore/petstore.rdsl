@@ -21,9 +21,10 @@ api SwaggerPetstore {
                 post updatePetWithForm(petId: Int, name: String, status: String) -> Pet, error: 400
                 delete deletePet(petId: Int) -> 200, error: 400
 
-                /uploadImage {
-                    post uploadFile(petId: Int, additionalMetadata: String, body: String) -> ApiResponse, error: {400, 404}
-                }
+            }
+
+            /:petId/uploadImage {
+                post uploadFile(petId: Int, additionalMetadata: String, body: String) -> ApiResponse, error: {400, 404}
             }
         }
 
