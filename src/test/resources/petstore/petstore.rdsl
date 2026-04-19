@@ -1,0 +1,105 @@
+api SwaggerPetstore {
+    meta {
+        title: "Swagger Petstore - OpenAPI 3.0"
+        version: "1.0.27"
+        server: "/api/v3"
+    }
+    paths {
+        /pet {
+            put updatePet(body: Pet) -> Pet, error: {400, 404, 422}
+            post addPet(body: Pet) -> Pet, error: {400, 422}
+
+
+            /findByStatus {
+                get findPetsByStatus(status: String) -> [Pet], error: 400
+            }
+            /findByTags {
+                get findPetsByTags(tags: [String]) -> [Pet], error: 400
+            }
+            /:petId {
+                get getPetById(petId: Int) -> Pet, error: {400, 404}
+                post updatePetWithForm(petId: Int, name: String, status: String) -> Pet, error: 400
+                delete deletePet(petId: Int) -> 200, error: 400
+
+                /uploadImage {
+                    post uploadFile(petId: Int, additionalMetadata: String, body: String) -> ApiResponse, error: {400, 404}
+                }
+            }
+        }
+
+        /store {
+            /inventory {
+                get getInventory -> String
+            }
+            /order {
+                post placeOrder(body: Order) -> Order, error: {400, 422}
+
+                /:orderId {
+                    get getOrderById(orderId: Int) -> Order, error: {400, 404}
+                    delete deleteOrder(orderId: Int) -> 200, error: {400, 404}
+                }
+            }
+        }
+
+        /user {
+            post createUser(body: User) -> User
+
+            /createWithList {
+                post createUsersWithListInput(body: [User]) -> User
+            }
+            /login {
+                get loginUser(username: String, password: String) -> String, error: 400
+            }
+            /logout {
+                get logoutUser -> 200
+            }
+            /:username {
+                get getUserByName(username: String) -> User, error: {400, 404}
+                put updateUser(username: String, body: User) -> 200, error: {400, 404}
+                delete deleteUser(username: String) -> 200, error: {400, 404}
+            }
+        }
+    }
+
+    models {
+        Order {
+            id: Int
+            petId: Int
+            quantity: Int
+            shipDate: String
+            status: String
+            complete: Boolean
+        }
+        Category {
+            id: Int
+            name: String
+        }
+        User {
+            id: Int
+            username: String
+            firstName: String
+            lastName: String
+            email: String
+            password: String
+            phone: String
+            userStatus: Int
+        }
+        Tag {
+            id: Int
+            name: String
+        }
+        Pet {
+            id: Int
+            name: String
+            category: Category
+            photoUrls: [String]
+            tags: [Tag]
+            status: String
+        }
+        ApiResponse {
+            code: Int
+            type: String
+            message: String
+        }
+    }
+}
