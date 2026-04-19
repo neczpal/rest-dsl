@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import static io.github.neczpal.restdsl.generator.openapi.TypeMapper.generateSchemaType;
-import static io.github.neczpal.restdsl.generator.openapi.TypeMapper.mapType;
 
 public class ServiceGenerator {
 
@@ -123,7 +122,7 @@ public class ServiceGenerator {
                 parameters.add(new PathParameter()
                         .name(param.name())
                         .required(true)
-                        .schema(new Schema<>().type(mapType(param.type())))
+                        .schema(generateSchemaType(param.type()))
                 );
             }
         }
@@ -131,7 +130,7 @@ public class ServiceGenerator {
             for (Field param : method.queryParams()) {
                 parameters.add(new QueryParameter()
                         .name(param.name())
-                        .schema(new Schema<>().type(mapType(param.type())))
+                        .schema(generateSchemaType(param.type()))
                 );
             }
         }
