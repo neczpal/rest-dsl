@@ -1,0 +1,464 @@
+openapi: 3.0.1
+info:
+  title: Swagger Petstore - OpenAPI 3.0
+  version: 1.0.27
+paths:
+  /pet:
+    put:
+      summary: Update an existing pet
+      description: Update an existing pet by Id
+      operationId: updatePet
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Pet"
+      responses:
+        "400":
+          description: Error
+        "404":
+          description: Error
+        "422":
+          description: Error
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pet"
+    post:
+      summary: Add a new pet to the store
+      description: Add a new pet to the store
+      operationId: addPet
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Pet"
+      responses:
+        "400":
+          description: Error
+        "422":
+          description: Error
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pet"
+  /pet/findByStatus:
+    get:
+      summary: Finds Pets by status
+      description: Multiple status values can be provided with comma separated strings
+      operationId: findPetsByStatus
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        "400":
+          description: Error
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Pet"
+  /pet/findByTags:
+    get:
+      summary: Finds Pets by tags
+      description: "Multiple tags can be provided with comma separated strings. Use\
+        \ tag1, tag2, tag3 for testing."
+      operationId: findPetsByTags
+      parameters:
+        - name: tags
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        "400":
+          description: Error
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Pet"
+  /pet/{petId}:
+    get:
+      summary: Find pet by ID
+      description: Returns a single pet
+      operationId: getPetById
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "400":
+          description: Error
+        "404":
+          description: Error
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pet"
+    post:
+      summary: Updates a pet in the store with form data
+      description: ""
+      operationId: updatePetWithForm
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: name
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        "400":
+          description: Error
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pet"
+    delete:
+      summary: Deletes a pet
+      description: ""
+      operationId: deletePet
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "400":
+          description: Error
+        "200":
+          description: Ok
+  /pet/{petId}/uploadImage:
+    post:
+      summary: uploads an image
+      description: ""
+      operationId: uploadFile
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: additionalMetadata
+          in: query
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+      responses:
+        "400":
+          description: Error
+        "404":
+          description: Error
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+  /store/inventory:
+    get:
+      summary: Returns pet inventories by status
+      description: Returns a map of status codes to quantities
+      operationId: getInventory
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: string
+  /store/order:
+    post:
+      summary: Place an order for a pet
+      description: Place a new order in the store
+      operationId: placeOrder
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Order"
+      responses:
+        "400":
+          description: Error
+        "422":
+          description: Error
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+  /store/order/{orderId}:
+    get:
+      summary: Find purchase order by ID
+      description: For valid response try integer IDs with value <= 5 or > 10. Other
+        values will generate exceptions.
+      operationId: getOrderById
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "400":
+          description: Error
+        "404":
+          description: Error
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+    delete:
+      summary: Delete purchase order by ID
+      description: For valid response try integer IDs with value < 1000. Anything
+        above 1000 or nonintegers will generate API errors
+      operationId: deleteOrder
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "400":
+          description: Error
+        "404":
+          description: Error
+        "200":
+          description: Ok
+  /user:
+    post:
+      summary: Create user
+      description: This can only be done by the logged in user.
+      operationId: createUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+  /user/createWithList:
+    post:
+      summary: Creates list of users with given input array
+      operationId: createUsersWithListInput
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+  /user/login:
+    get:
+      summary: Logs user into the system
+      operationId: loginUser
+      parameters:
+        - name: username
+          in: query
+          schema:
+            type: string
+        - name: password
+          in: query
+          schema:
+            type: string
+      responses:
+        "400":
+          description: Error
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: string
+  /user/logout:
+    get:
+      summary: Logs out current logged in user session
+      operationId: logoutUser
+      responses:
+        "200":
+          description: Ok
+  /user/{username}:
+    get:
+      summary: Get user by user name
+      operationId: getUserByName
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "400":
+          description: Error
+        "404":
+          description: Error
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    put:
+      summary: Update user
+      description: This can only be done by the logged in user.
+      operationId: updateUser
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "400":
+          description: Error
+        "404":
+          description: Error
+        "200":
+          description: Ok
+    delete:
+      summary: Delete user
+      description: This can only be done by the logged in user.
+      operationId: deleteUser
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "400":
+          description: Error
+        "404":
+          description: Error
+        "200":
+          description: Ok
+components:
+  schemas:
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+        petId:
+          type: integer
+        quantity:
+          type: integer
+        shipDate:
+          type: string
+        status:
+          type: string
+        complete:
+          type: boolean
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phone:
+          type: string
+        userStatus:
+          type: integer
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+    Pet:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        category:
+          $ref: "#/components/schemas/Category"
+        photoUrls:
+          type: array
+          items:
+            type: string
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tag"
+        status:
+          type: string
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+        type:
+          type: string
+        message:
+          type: string
