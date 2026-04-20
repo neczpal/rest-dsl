@@ -76,7 +76,9 @@ public class ServiceGenerator {
 
     private Operation generateMethod(Method method) {
         Operation operation = new Operation()
-                .summary(method.name());
+                .operationId(method.name())
+                .summary(method.summary())
+                .description(method.description());
 
         List<Parameter> parameters = generateParameters(method);
         if (parameters != null && !parameters.isEmpty()) {
@@ -102,7 +104,7 @@ public class ServiceGenerator {
                 if (!fullPath.startsWith("/")) {
                     fullPath = "/" + fullPath;
                 }
-                methodsByPath.computeIfAbsent(fullPath, k -> new ArrayList<>()).add(method);
+                methodsByPath.computeIfAbsent(fullPath, _ -> new ArrayList<>()).add(method);
             }
         }
         return methodsByPath;

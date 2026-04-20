@@ -49,7 +49,16 @@ pathDefinition
 
 // --- ENDPOINT RULES ---
 endpointDefinition
-    : httpMethod anyId? endpointParams? endpointSignature?
+    : endpointAnnotations? httpMethod anyId? endpointParams? endpointSignature?
+    ;
+
+endpointAnnotations
+    : endpointAnnotation+
+    ;
+
+endpointAnnotation
+    : SUMMARY '(' STRING ')'
+    | DESCRIPTION '(' STRING ')'
     ;
 
 endpointParams
@@ -161,6 +170,9 @@ PATHS    : 'paths' ;
 MODELS   : 'models' ;
 ERROR    : 'error' ;
 RESPONSE : 'response' ;
+SUMMARY  : '@summary' ;
+DESCRIPTION : '@description' ;
+
 
 // Symbols
 ARROW    : '->' ;

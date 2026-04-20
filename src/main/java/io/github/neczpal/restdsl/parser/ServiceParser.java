@@ -62,6 +62,18 @@ public class ServiceParser {
     }
 
     private Method parseMethod(RestDSLParser.EndpointDefinitionContext ctx, String currentPath) {
+        String summary = null;
+        String description = null;
+        if (ctx.endpointAnnotations() != null) {
+            for (RestDSLParser.EndpointAnnotationContext annotation : ctx.endpointAnnotations().endpointAnnotation()) {
+                if (annotation.SUMMARY() != null) {
+                    summary = unquote(annotation.STRING().getText());
+                } else if (annotation.DESCRIPTION() != null) {
+                    description = unquote(annotation.STRING().getText());
+                }
+            }
+        }
+
         String verb = ctx.httpMethod().getText();
         String name = ctx.anyId() != null ? ctx.anyId().getText() : generateMethodName(verb, currentPath);
         
@@ -83,7 +95,7 @@ public class ServiceParser {
             }
         }
 
-        Matcher matcher = Pattern.compile("\\{([^}]+)\\}").matcher(currentPath);
+        Matcher matcher = Pattern.compile("\\{([^}]+)}").matcher(currentPath);
         while (matcher.find()) {
             String pName = matcher.group(1);
             boolean exists = pathParams.stream().anyMatch(p -> p.name().equals(pName));
@@ -146,6 +158,8 @@ public class ServiceParser {
                 .verb(verb)
                 .name(name)
                 .path(currentPath.isEmpty() ? null : currentPath)
+                .summary(summary)
+                .description(description)
                 .bodyType(bodyType)
                 .pathParams(pathParams)
                 .queryParams(queryParams)
@@ -168,5 +182,12 @@ public class ServiceParser {
             }
         }
         return name.toString();
+    }
+
+    private String unquote(String text) {
+        if (text != null && text.startsWith("\"") && text.endsWith("\"")) {
+            return text.substring(1, text.length() - 1);
+        }
+        return text;
     }
 }

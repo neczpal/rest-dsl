@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ApiGenerator {
     private final TypeMapper typeMapper;
@@ -73,6 +74,32 @@ public class ApiGenerator {
         MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(methodName)
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                 .returns(ParameterizedTypeName.get(ClassName.get(ResponseEntity.class), returnType.box()));
+
+        // Javadoc
+        if (method.summary() != null) {
+            methodBuilder.addJavadoc("$L\n", method.summary());
+        }
+        if (method.description() != null) {
+            methodBuilder.addJavadoc("\n$L\n", method.description());
+        }
+        
+        // Javadoc for possible errors
+        if (!method.responses().isEmpty()) {
+            boolean hasErrors = method.responses().entrySet().stream().anyMatch(e -> e.getKey() >= 400);
+            if (hasErrors) {
+                methodBuilder.addJavadoc("\nPossible error codes:\n");
+                for (Map.Entry<Integer, String> response : method.responses().entrySet()) {
+                    if (response.getKey() >= 400) {
+                        String type = response.getValue();
+                        if (type != null && !type.equals("Void") && !type.trim().isEmpty()) {
+                            methodBuilder.addJavadoc("- $L - $L\n", response.getKey(), type);
+                        } else {
+                            methodBuilder.addJavadoc("- $L\n", response.getKey());
+                        }
+                    }
+                }
+            }
+        }
 
         // Add mapping annotation
         methodBuilder.addAnnotation(getMappingAnnotation(method));

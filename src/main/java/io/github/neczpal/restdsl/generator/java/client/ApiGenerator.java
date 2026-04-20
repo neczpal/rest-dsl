@@ -17,6 +17,7 @@ import org.springframework.web.client.RestClient;
 import javax.lang.model.element.Modifier;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ApiGenerator {
@@ -77,6 +78,32 @@ public class ApiGenerator {
         MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(methodName)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(returnType);
+
+        // Javadoc
+        if (endpoint.summary() != null) {
+            methodBuilder.addJavadoc("$L\n", endpoint.summary());
+        }
+        if (endpoint.description() != null) {
+            methodBuilder.addJavadoc("\n$L\n", endpoint.description());
+        }
+
+        // Javadoc for possible errors
+        if (!endpoint.responses().isEmpty()) {
+            boolean hasErrors = endpoint.responses().entrySet().stream().anyMatch(e -> e.getKey() >= 400);
+            if (hasErrors) {
+                methodBuilder.addJavadoc("\nPossible error codes:\n");
+                for (Map.Entry<Integer, String> response : endpoint.responses().entrySet()) {
+                    if (response.getKey() >= 400) {
+                        String type = response.getValue();
+                        if (type != null && !type.equals("Void") && !type.trim().isEmpty()) {
+                            methodBuilder.addJavadoc("- $L - $L\n", response.getKey(), type);
+                        } else {
+                            methodBuilder.addJavadoc("- $L\n", response.getKey());
+                        }
+                    }
+                }
+            }
+        }
 
         // Parameters
         endpoint.pathParams().forEach(p -> methodBuilder.addParameter(typeMapper.toJavaType(p.type()), p.name()));

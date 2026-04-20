@@ -11,6 +11,8 @@ public record Method(
     String verb,
     String name,
     String path,
+    String summary,
+    String description,
     String bodyType,
     List<Field> pathParams,
     List<Field> queryParams,

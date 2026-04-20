@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Generate PetStore All" type="CompoundRunConfigurationType">
+    <toRun name="Generate Petstore OpenAPI" type="Application" />
+    <toRun name="Generate Petstore Rest Client" type="Application" />
+    <toRun name="Generate Petstore Spring Server" type="Application" />
+    <method v="2" />
+  </configuration>
+</component>

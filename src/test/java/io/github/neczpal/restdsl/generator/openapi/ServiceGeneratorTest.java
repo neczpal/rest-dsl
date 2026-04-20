@@ -38,7 +38,7 @@ public class ServiceGeneratorTest {
                 paths:
                   /api/v3/pet/{id}:
                     get:
-                      summary: getPet
+                      operationId: getPet
                       responses:
                         "200":
                           description: Ok
