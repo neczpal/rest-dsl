@@ -4,7 +4,9 @@ import io.github.neczpal.restdsl.model.Field;
 import io.github.neczpal.restdsl.model.Model;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.ObjectSchema;
+import io.swagger.v3.oas.models.media.Schema;
 
 import java.util.List;
 
@@ -21,7 +23,17 @@ public class ModelGenerator {
             for (Field field : model.fields()) {
                 schema.addProperty(field.name(), generateSchemaType(field.type()));
             }
-            components.addSchemas(model.name(), schema);
+
+            if (model.parent() != null) {
+                ComposedSchema composedSchema = new ComposedSchema();
+                Schema parentSchema = new Schema();
+                parentSchema.set$ref("#/components/schemas/" + model.parent().name());
+                composedSchema.addAllOfItem(parentSchema);
+                composedSchema.addAllOfItem(schema);
+                components.addSchemas(model.name(), composedSchema);
+            } else {
+                components.addSchemas(model.name(), schema);
+            }
         }
         openapi.components(components);
     }

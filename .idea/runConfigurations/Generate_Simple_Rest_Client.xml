@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Generate Rest Client" type="Application" factoryName="Application">
+  <configuration default="false" name="Generate Simple Rest Client" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="io.github.neczpal.restdsl.Main" />
     <module name="rest-dsl" />
     <option name="PROGRAM_PARAMETERS" value="-g restclient -p io.github.neczpal.generated.client src/test/resources/simple/simple.rdsl target/generated-sources/rest-client" />

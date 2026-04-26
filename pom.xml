@@ -11,9 +11,9 @@
     <properties>
         <antlr.version>4.13.2</antlr.version>
         <lombok.version>1.18.42</lombok.version>
-        <javapoet.version>0.12.0</javapoet.version>
+        <javapoet.version>0.14.0</javapoet.version>
         <swagger-openapi-models.version>2.2.45</swagger-openapi-models.version>
-        <spring.version>7.0.6</spring.version>
+        <spring.version>7.0.7</spring.version>
         <networknt-openapi-parser.version>2.3.3</networknt-openapi-parser.version>
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>

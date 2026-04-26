@@ -9,18 +9,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ApiClientGenerator implements Generator {
-    private final ApiGenerator apiGenerator;
-    private final ModelGenerator modelGenerator;
+    private final String packageName;
 
     public ApiClientGenerator(String packageName) {
-        this.apiGenerator = new ApiGenerator(packageName);
-        this.modelGenerator = new ModelGenerator(packageName);
+        this.packageName = packageName;
     }
 
     @Override
     public List<GeneratedFile> generate(RestDsl restDsl) {
         List<GeneratedFile> files = new ArrayList<>();
-        files.addAll(modelGenerator.generate(restDsl.models()));
+        ModelGenerator modelGenerator = new ModelGenerator(packageName, restDsl.models());
+        ApiGenerator apiGenerator = new ApiGenerator(packageName);
+        files.addAll(modelGenerator.generate());
         files.addAll(apiGenerator.generate(restDsl.services()));
         return files;
     }

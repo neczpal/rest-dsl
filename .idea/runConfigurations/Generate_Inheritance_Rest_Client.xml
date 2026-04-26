@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Generate Inheritance Rest Client" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="io.github.neczpal.restdsl.Main" />
+    <module name="rest-dsl" />
+    <option name="PROGRAM_PARAMETERS" value="-g restclient -p io.github.neczpal.restdsl.inheritance.client src/test/resources/inheritance/inheritance.rdsl target/generated-sources/rest-client" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

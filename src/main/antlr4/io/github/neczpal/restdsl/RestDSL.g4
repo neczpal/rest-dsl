@@ -124,7 +124,7 @@ modelsDefinition
     ;
 
 modelDefinition
-    : CAPITAL_ID modelBlock
+    : CAPITAL_ID (':' CAPITAL_ID)? modelBlock
     ;
 
 modelBlock

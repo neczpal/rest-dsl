@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Generate Inheritance All" type="CompoundRunConfigurationType">
+    <toRun name="Generate Inheritance OpenAPI" type="Application" />
+    <toRun name="Generate Inheritance Rest Client" type="Application" />
+    <toRun name="Generate Inheritance Spring Server" type="Application" />
+    <method v="2" />
+  </configuration>
+</component>

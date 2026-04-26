@@ -22,7 +22,7 @@ public class ApiGenerator {
     private final String packageName;
 
     public ApiGenerator(String packageName) {
-        this.typeMapper = new TypeMapper();
+        this.typeMapper = new TypeMapper(packageName);
         this.packageName = packageName;
     }
 

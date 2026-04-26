@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Generate Complex Spring Server" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="io.github.neczpal.restdsl.Main" />
+    <module name="rest-dsl" />
+    <option name="PROGRAM_PARAMETERS" value="-g spring -p io.github.neczpal.generated.server src/test/resources/petstore/petstore.rdsl target/generated-sources/spring-server" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

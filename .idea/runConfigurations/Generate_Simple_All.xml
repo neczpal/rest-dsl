@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Generate Simple All" type="CompoundRunConfigurationType">
+    <toRun name="Generate Simple OpenAPI" type="Application" />
+    <toRun name="Generate Simple Rest Client" type="Application" />
+    <toRun name="Generate Simple Spring Server" type="Application" />
+    <method v="2" />
+  </configuration>
+</component>

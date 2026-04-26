@@ -7,6 +7,12 @@ import com.palantir.javapoet.TypeName;
 import java.util.List;
 
 public class TypeMapper {
+    private final String packageName;
+
+    public TypeMapper(String packageName) {
+        this.packageName = packageName;
+    }
+
     public TypeName toJavaType(String dslType) {
         if (dslType == null || dslType.trim().isEmpty()) {
             return TypeName.VOID;
@@ -21,7 +27,7 @@ public class TypeMapper {
             case "Boolean" -> ClassName.get(Boolean.class);
             case "Double" -> ClassName.get(Double.class);
             case "Void" -> TypeName.VOID;
-            default -> ClassName.bestGuess(dslType);
+            default -> ClassName.get(packageName, dslType);
         };
     }
 }
