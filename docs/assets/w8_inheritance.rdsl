@@ -1,0 +1,44 @@
+api Inheritance {
+    meta {
+        title: "Inheritance Example"
+        version: "1.0.0"
+        server: "/api/v1"
+    }
+
+    models {
+        User {
+            id: Int
+            email: String
+        }
+
+        Individual: User {
+            firstName: String
+            lastName: String
+        }
+
+        BusinessIndividual: Individual {
+            taxNumber: String
+        }
+
+        Company: User {
+            companyName: String
+        }
+
+        Gmbh: Company {
+            registrationNumber: String
+        }
+
+        Ltd: Company {
+            registrationNumber: String
+            country: String
+        }
+    }
+
+    paths {
+        /users {
+            @summary("Get a user")
+            @description("Returns a single user, which can be an Individual, Company, or their subtypes.")
+            get getUser -> User, error: 404
+        }
+    }
+}

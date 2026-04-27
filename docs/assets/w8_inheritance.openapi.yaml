@@ -1,0 +1,68 @@
+openapi: 3.0.1
+info:
+  title: Inheritance Example
+  version: 1.0.0
+paths:
+  /users:
+    get:
+      summary: Get a user
+      description: "Returns a single user, which can be an Individual, Company, or\
+        \ their subtypes."
+      operationId: getUser
+      responses:
+        "404":
+          description: Error
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+components:
+  schemas:
+    BusinessIndividual:
+      allOf:
+      - $ref: "#/components/schemas/Individual"
+      - type: object
+        properties:
+          taxNumber:
+            type: string
+    Company:
+      allOf:
+      - $ref: "#/components/schemas/User"
+      - type: object
+        properties:
+          companyName:
+            type: string
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+    Individual:
+      allOf:
+      - $ref: "#/components/schemas/User"
+      - type: object
+        properties:
+          firstName:
+            type: string
+          lastName:
+            type: string
+    Gmbh:
+      allOf:
+      - $ref: "#/components/schemas/Company"
+      - type: object
+        properties:
+          registrationNumber:
+            type: string
+    Ltd:
+      allOf:
+      - $ref: "#/components/schemas/Company"
+      - type: object
+        properties:
+          registrationNumber:
+            type: string
+          country:
+            type: string
