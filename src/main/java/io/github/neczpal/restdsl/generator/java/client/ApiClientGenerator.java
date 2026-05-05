@@ -18,7 +18,7 @@ public class ApiClientGenerator implements Generator {
     @Override
     public List<GeneratedFile> generate(RestDsl restDsl) {
         List<GeneratedFile> files = new ArrayList<>();
-        ModelGenerator modelGenerator = new ModelGenerator(packageName, restDsl.models());
+        ModelGenerator modelGenerator = new ModelGenerator(packageName, restDsl.traits(), restDsl.models());
         ApiGenerator apiGenerator = new ApiGenerator(packageName);
         files.addAll(modelGenerator.generate());
         files.addAll(apiGenerator.generate(restDsl.services()));

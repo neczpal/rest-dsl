@@ -5,8 +5,42 @@ api Inheritance {
         server: "/api/v1"
     }
 
+    traits {
+        Auditable {
+            createdAt: String // TODO DateTime
+            updatedAt: String // TODO DateTime
+        }
+
+        SoftDeletable {
+            isDeleted: Boolean
+            deletedAt: String // TODO DateTime
+        }
+
+        Addressable {
+            street: String
+            city: String
+            zipCode: String
+            country: String
+        }
+
+        Contactable {
+            + Addressable
+            phoneNumber: String
+            website: String
+        }
+
+        Approvable {
+            isApproved: Boolean
+            approvedBy: Int // Reference to a User ID
+            approvedAt: String // TODO DateTime
+        }
+    }
+
     models {
         User {
+            + Auditable
+            + SoftDeletable
+
             id: Int
             email: String
         }
@@ -17,20 +51,32 @@ api Inheritance {
         }
 
         BusinessIndividual: Individual {
+            + Addressable  // Needs a registered address for tax
             taxNumber: String
         }
 
         Company: User {
+            + Contactable  // Automatically gets Addressable fields too!
             companyName: String
-        }
-
-        Gmbh: Company {
-            registrationNumber: String
         }
 
         Ltd: Company {
             registrationNumber: String
-            country: String
+        }
+
+        Document {
+            + Auditable // Shares the exact same tracking logic as User
+
+            id: Int
+            documentNumber: String
+        }
+
+        Invoice: Document {
+            + Approvable // Requires an admin to approve it
+
+            amount: Double
+            currency: String
+            issuedTo: Int // Reference to a User ID
         }
     }
 
@@ -39,6 +85,12 @@ api Inheritance {
             @summary("Get a user")
             @description("Returns a single user, which can be an Individual, Company, or their subtypes.")
             get getUser -> User, error: 404
+        }
+
+        /documents {
+            @summary("Get a document")
+            @description("Returns a single document.")
+            get getDocument -> Document, error: 404
         }
     }
 }

@@ -11,6 +11,7 @@ apiDefinition
 apiElement
     : metaDefinition
     | pathsDefinition
+    | traitsDefinition
     | modelsDefinition
     ;
 
@@ -118,6 +119,24 @@ errorDetailBlock
     : '{' (separator? field)* separator? '}'
     ;
 
+// --- TRAIT RULES ---
+traitsDefinition
+    : TRAITS '{' (separator? traitDefinition)* separator? '}'
+    ;
+
+traitDefinition
+    : CAPITAL_ID traitBlock
+    ;
+
+traitBlock
+    : '{' (separator? traitField)* separator? '}'
+    ;
+
+traitField
+    : '+' CAPITAL_ID
+    | field
+    ;
+
 // --- MODEL RULES ---
 modelsDefinition
     : MODELS '{' (separator? modelDefinition)* separator? '}'
@@ -128,7 +147,12 @@ modelDefinition
     ;
 
 modelBlock
-    : '{' (separator? field)* separator? '}'
+    : '{' (separator? modelField)* separator? '}'
+    ;
+
+modelField
+    : '+' CAPITAL_ID
+    | field
     ;
 
 field
@@ -155,7 +179,7 @@ separator
 anyId
     : ID
     | httpMethod
-    | ERROR | RESPONSE | META | PATHS | MODELS
+    | ERROR | RESPONSE | META | PATHS | MODELS | TRAITS
     ;
 
 httpMethod
@@ -168,6 +192,7 @@ httpMethod
 META     : 'meta' ;
 PATHS    : 'paths' ;
 MODELS   : 'models' ;
+TRAITS   : 'traits' ;
 ERROR    : 'error' ;
 RESPONSE : 'response' ;
 SUMMARY  : '@summary' ;

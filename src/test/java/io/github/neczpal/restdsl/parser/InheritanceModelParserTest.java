@@ -7,6 +7,7 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -51,7 +52,7 @@ public class InheritanceModelParserTest {
             }
         }
 
-        List<Model> models = new ModelParser().parse(modelsDefinition);
+        List<Model> models = new ModelParser().parse(modelsDefinition, new ArrayList<>());
         Map<String, Model> modelsMap = models.stream().collect(Collectors.toMap(Model::name, Function.identity()));
 
         assertEquals(3, models.size());

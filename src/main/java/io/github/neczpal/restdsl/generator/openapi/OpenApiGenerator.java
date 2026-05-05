@@ -25,7 +25,7 @@ public class OpenApiGenerator implements Generator {
         OpenAPI openAPI = new OpenAPI();
         metaInfoGenerator.generate(openAPI, restDsl.api());
         serviceGenerator.generate(openAPI, restDsl.services());
-        modelGenerator.generate(openAPI, restDsl.models());
+        modelGenerator.generate(openAPI, restDsl.traits(), restDsl.models());
 
         try {
             String openapiYaml = Yaml.mapper().writeValueAsString(openAPI);

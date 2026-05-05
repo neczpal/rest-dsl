@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Builder
-public record Model(String name, Model parent, List<Trait> traits, List<Field> fields) {
-    public Model {
+public record Trait(String name, List<Trait> traits, List<Field> fields) {
+    public Trait {
         if (traits == null) {
             traits = new ArrayList<>();
         }

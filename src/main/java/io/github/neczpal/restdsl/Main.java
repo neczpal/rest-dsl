@@ -9,9 +9,11 @@ import io.github.neczpal.restdsl.model.Api;
 import io.github.neczpal.restdsl.model.Model;
 import io.github.neczpal.restdsl.model.RestDsl;
 import io.github.neczpal.restdsl.model.Service;
+import io.github.neczpal.restdsl.model.Trait;
 import io.github.neczpal.restdsl.parser.ApiParser;
 import io.github.neczpal.restdsl.parser.ModelParser;
 import io.github.neczpal.restdsl.parser.ServiceParser;
+import io.github.neczpal.restdsl.parser.TraitParser;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -78,18 +80,22 @@ public class Main {
             RestDSLParser.FileContext tree = parser.file();
 
             ApiParser apiParser = new ApiParser();
+            TraitParser traitParser = new TraitParser();
             ModelParser modelParser = new ModelParser();
             ServiceParser serviceParser = new ServiceParser();
 
             Api api = null;
+            List<Trait> traits = new ArrayList<>();
             List<Model> models = new ArrayList<>();
             List<Service> services = new ArrayList<>();
 
             for (RestDSLParser.ApiDefinitionContext def : tree.apiDefinition()) {
                 api = apiParser.parse(def);
                 for (RestDSLParser.ApiElementContext element : def.apiElement()) {
-                    if (element.modelsDefinition() != null) {
-                        models.addAll(modelParser.parse(element.modelsDefinition()));
+                    if (element.traitsDefinition() != null) {
+                        traits.addAll(traitParser.parse(element.traitsDefinition()));
+                    } else if (element.modelsDefinition() != null) {
+                        models.addAll(modelParser.parse(element.modelsDefinition(), traits));
                     } else if (element.pathsDefinition() != null) {
                         services.addAll(serviceParser.parse(element.pathsDefinition()));
                     }
@@ -103,6 +109,7 @@ public class Main {
 
             RestDsl restDsl = RestDsl.builder()
                     .api(api)
+                    .traits(traits)
                     .models(models)
                     .services(services)
                     .build();

@@ -2,10 +2,12 @@ package io.github.neczpal.restdsl.generator.openapi;
 
 import io.github.neczpal.restdsl.model.Field;
 import io.github.neczpal.restdsl.model.Model;
+import io.github.neczpal.restdsl.model.Trait;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.OpenAPI;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -25,8 +27,8 @@ public class ModelGeneratorTest {
                 .build();
         ModelGenerator generator = new ModelGenerator();
         OpenAPI openAPI = new OpenAPI();
-        generator.generate(openAPI, List.of(model));
-        
+        generator.generate(openAPI, new ArrayList<>(), List.of(model));
+
         String result = Yaml.mapper().writeValueAsString(openAPI);
         String expected = """
                 openapi: 3.0.1
@@ -58,10 +60,18 @@ public class ModelGeneratorTest {
                         Field.builder().name("name").type("String").build()
                 ))
                 .build();
+        Model compModel = Model.builder()
+                .name("Company")
+                .parent(userModel)
+                .fields(Collections.singletonList(
+                        Field.builder().name("registrationNumber").type("String").build()
+                ))
+                .build();
+
         ModelGenerator generator = new ModelGenerator();
         OpenAPI openAPI = new OpenAPI();
-        generator.generate(openAPI, List.of(userModel, indModel));
-        
+        generator.generate(openAPI, new ArrayList<>(), List.of(userModel, indModel, compModel));
+
         String result = Yaml.mapper().writeValueAsString(openAPI);
         String expected = """
                 openapi: 3.0.1
@@ -72,6 +82,11 @@ public class ModelGeneratorTest {
                       properties:
                         id:
                           type: integer
+                      discriminator:
+                        propertyName: _type
+                        mapping:
+                          Individual: "#/components/schemas/Individual"
+                          Company: "#/components/schemas/Company"
                     Individual:
                       allOf:
                       - $ref: "#/components/schemas/User"
@@ -79,7 +94,58 @@ public class ModelGeneratorTest {
                         properties:
                           name:
                             type: string
+                    Company:
+                      allOf:
+                      - $ref: "#/components/schemas/User"
+                      - type: object
+                        properties:
+                          registrationNumber:
+                            type: string
                 """;
+        assertEquals(expected.replaceAll("\\s+", ""), result.replaceAll("\\s+", ""));
+    }
+
+    @Test
+    public void testGenerateWithTraits() throws Exception {
+        Trait auditable = Trait.builder()
+                .name("Auditable")
+                .fields(Arrays.asList(
+                        Field.builder().name("createdAt").type("String").build(),
+                        Field.builder().name("updatedAt").type("String").build()
+                ))
+                .build();
+        Model documentModel = Model.builder()
+                .name("Document")
+                .traits(Collections.singletonList(auditable))
+                .fields(Collections.singletonList(
+                        Field.builder().name("docId").type("String").build()
+                ))
+                .build();
+
+        ModelGenerator generator = new ModelGenerator();
+        OpenAPI openAPI = new OpenAPI();
+        generator.generate(openAPI, List.of(auditable), List.of(documentModel));
+
+        String result = Yaml.mapper().writeValueAsString(openAPI);
+        String expected = """
+            openapi: 3.0.1
+            components:
+              schemas:
+                Auditable:
+                  type: object
+                  properties:
+                    createdAt:
+                      type: string
+                    updatedAt:
+                      type: string
+                Document:
+                  allOf:
+                  - $ref: "#/components/schemas/Auditable"
+                  - type: object
+                    properties:
+                      docId:
+                        type: string
+            """;
         assertEquals(expected.replaceAll("\\s+", ""), result.replaceAll("\\s+", ""));
     }
 }

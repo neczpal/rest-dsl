@@ -43,11 +43,11 @@ public class AntlrModelParserTest {
         RestDSLParser.ModelDefinitionContext modelContext = modelsContext.modelDefinition(0);
         assertEquals("Person", modelContext.CAPITAL_ID(0).getText());
         assertEquals(1, modelContext.CAPITAL_ID().size());
-        assertEquals(2, modelContext.modelBlock().field().size());
-        assertEquals("id", modelContext.modelBlock().field(0).anyId().getText());
-        assertEquals("Int", modelContext.modelBlock().field(0).type().getText());
-        assertEquals("name", modelContext.modelBlock().field(1).anyId().getText());
-        assertEquals("String", modelContext.modelBlock().field(1).type().getText());
+        assertEquals(2, modelContext.modelBlock().modelField().size());
+        assertEquals("id", modelContext.modelBlock().modelField(0).field().anyId().getText());
+        assertEquals("Int", modelContext.modelBlock().modelField(0).field().type().getText());
+        assertEquals("name", modelContext.modelBlock().modelField(1).field().anyId().getText());
+        assertEquals("String", modelContext.modelBlock().modelField(1).field().type().getText());
     }
 
     @Test

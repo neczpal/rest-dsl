@@ -7,6 +7,7 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -44,7 +45,7 @@ public class ModelParserTest {
             }
         }
 
-        List<Model> models = new ModelParser().parse(modelsDefinition);
+        List<Model> models = new ModelParser().parse(modelsDefinition, new ArrayList<>());
         assertEquals(1, models.size());
         Model model = models.getFirst();
         assertEquals("Person", model.name());
@@ -86,7 +87,7 @@ public class ModelParserTest {
             }
         }
 
-        List<Model> models = new ModelParser().parse(modelsDefinition);
+        List<Model> models = new ModelParser().parse(modelsDefinition, new ArrayList<>());
         Map<String, Model> modelsMap = models.stream().collect(Collectors.toMap(Model::name, Function.identity()));
 
         assertEquals(2, models.size());
