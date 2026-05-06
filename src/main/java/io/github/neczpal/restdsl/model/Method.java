@@ -13,10 +13,10 @@ public record Method(
     String path,
     String summary,
     String description,
-    String bodyType,
+    Type bodyType,
     List<Field> pathParams,
     List<Field> queryParams,
-    Map<Integer, String> responses
+    Map<Integer, Type> responses
 ) {
     public Method {
         if (pathParams == null) pathParams = new ArrayList<>();

@@ -11,6 +11,7 @@ import io.github.neczpal.restdsl.generator.java.TypeMapper;
 import io.github.neczpal.restdsl.model.Field;
 import io.github.neczpal.restdsl.model.Method;
 import io.github.neczpal.restdsl.model.Service;
+import io.github.neczpal.restdsl.model.Type;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.client.RestClient;
 
@@ -72,7 +73,7 @@ public class ApiGenerator {
     private MethodSpec generateEndpoint(Method endpoint) {
         String methodName = endpoint.name();
         String verb = endpoint.verb().toUpperCase();
-        String dslReturnType = endpoint.responses().get(200);
+        Type dslReturnType = endpoint.responses().get(200);
         TypeName returnType = typeMapper.toJavaType(dslReturnType);
 
         MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(methodName)
@@ -92,11 +93,11 @@ public class ApiGenerator {
             boolean hasErrors = endpoint.responses().entrySet().stream().anyMatch(e -> e.getKey() >= 400);
             if (hasErrors) {
                 methodBuilder.addJavadoc("\nPossible error codes:\n");
-                for (Map.Entry<Integer, String> response : endpoint.responses().entrySet()) {
+                for (Map.Entry<Integer, Type> response : endpoint.responses().entrySet()) {
                     if (response.getKey() >= 400) {
-                        String type = response.getValue();
-                        if (type != null && !type.equals("Void") && !type.trim().isEmpty()) {
-                            methodBuilder.addJavadoc("- $L - $L\n", response.getKey(), type);
+                        Type type = response.getValue();
+                        if (type != null && !"Void".equals(type.name())) {
+                            methodBuilder.addJavadoc("- $L - $L\n", response.getKey(), type.name());
                         } else {
                             methodBuilder.addJavadoc("- $L\n", response.getKey());
                         }
@@ -158,7 +159,7 @@ public class ApiGenerator {
         if (returnType.equals(TypeName.VOID)) {
             statement.add("                .toBodilessEntity()");
         } else {
-            if (dslReturnType != null && dslReturnType.startsWith("[")) {
+            if (dslReturnType != null && dslReturnType.isArray()) {
                 statement.add("                .body(new $T<$T>() {})", ParameterizedTypeReference.class, returnType);
             } else {
                 statement.add("                .body($T.class)", returnType);

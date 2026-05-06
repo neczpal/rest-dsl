@@ -1,0 +1,24 @@
+api NewTypesApi {
+    meta {
+        title: "New Types API"
+        version: "1.0.0"
+        base: "/api"
+    }
+
+    models {
+        NewTypes {
+            dateTime: DateTime
+            date: Date
+            time: Time
+            float: Float
+            bigInt: BigInt
+            binary: Binary
+        }
+    }
+
+    paths {
+        /new-types {
+            get getNewTypes -> NewTypes
+        }
+    }
+}

@@ -7,6 +7,7 @@ import io.github.neczpal.restdsl.generator.java.TypeMapper;
 import io.github.neczpal.restdsl.model.Field;
 import io.github.neczpal.restdsl.model.Method;
 import io.github.neczpal.restdsl.model.Service;
+import io.github.neczpal.restdsl.model.Type;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -88,11 +89,11 @@ public class ApiGenerator {
             boolean hasErrors = method.responses().entrySet().stream().anyMatch(e -> e.getKey() >= 400);
             if (hasErrors) {
                 methodBuilder.addJavadoc("\nPossible error codes:\n");
-                for (Map.Entry<Integer, String> response : method.responses().entrySet()) {
+                for (Map.Entry<Integer, Type> response : method.responses().entrySet()) {
                     if (response.getKey() >= 400) {
-                        String type = response.getValue();
-                        if (type != null && !type.equals("Void") && !type.trim().isEmpty()) {
-                            methodBuilder.addJavadoc("- $L - $L\n", response.getKey(), type);
+                        Type type = response.getValue();
+                        if (type != null && !"Void".equals(type.name())) {
+                            methodBuilder.addJavadoc("- $L - $L\n", response.getKey(), type.name());
                         } else {
                             methodBuilder.addJavadoc("- $L\n", response.getKey());
                         }
@@ -156,8 +157,8 @@ public class ApiGenerator {
             return TypeName.VOID;
         }
 
-        String responseType = method.responses().get(200);
-        if (responseType == null || responseType.trim().isEmpty() || responseType.equals("Void")) {
+        Type responseType = method.responses().get(200);
+        if (responseType == null || "Void".equals(responseType.name())) {
             return TypeName.VOID;
         }
 

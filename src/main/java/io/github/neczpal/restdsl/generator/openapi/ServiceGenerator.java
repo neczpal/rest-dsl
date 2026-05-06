@@ -3,6 +3,7 @@ package io.github.neczpal.restdsl.generator.openapi;
 import io.github.neczpal.restdsl.model.Field;
 import io.github.neczpal.restdsl.model.Method;
 import io.github.neczpal.restdsl.model.Service;
+import io.github.neczpal.restdsl.model.Type;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
@@ -160,11 +161,10 @@ public class ServiceGenerator {
             return responses;
         }
 
-        for (Map.Entry<Integer, String> entry : method.responses().entrySet()) {
-            String responseValue = entry.getValue();
+        for (Map.Entry<Integer, Type> entry : method.responses().entrySet()) {
             ApiResponse response = new ApiResponse();
 
-            Schema<?> schema = generateSchemaType(responseValue);
+            Schema<?> schema = generateSchemaType(entry.getValue());
 
             if (entry.getKey() < 400) {
                 response.description("Ok");

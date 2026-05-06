@@ -3,7 +3,12 @@ package io.github.neczpal.restdsl.generator.java;
 import com.palantir.javapoet.ClassName;
 import com.palantir.javapoet.ParameterizedTypeName;
 import com.palantir.javapoet.TypeName;
+import io.github.neczpal.restdsl.model.Type;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 public class TypeMapper {
@@ -13,21 +18,27 @@ public class TypeMapper {
         this.packageName = packageName;
     }
 
-    public TypeName toJavaType(String dslType) {
-        if (dslType == null || dslType.trim().isEmpty()) {
+    public TypeName toJavaType(Type dslType) {
+        if (dslType == null || "Void".equals(dslType.name())) {
             return TypeName.VOID;
         }
-        if (dslType.startsWith("[") && dslType.endsWith("]")) {
-            String innerType = dslType.substring(1, dslType.length() - 1);
-            return ParameterizedTypeName.get(ClassName.get(List.class), toJavaType(innerType));
+        if (dslType.isArray()) {
+            return ParameterizedTypeName.get(ClassName.get(List.class), toJavaType(dslType.elementType()));
         }
-        return switch (dslType) {
-            case "Int" -> ClassName.get(Integer.class);
-            case "String" -> ClassName.get(String.class);
-            case "Boolean" -> ClassName.get(Boolean.class);
-            case "Double" -> ClassName.get(Double.class);
-            case "Void" -> TypeName.VOID;
-            default -> ClassName.get(packageName, dslType);
-        };
+        if (dslType.isPrimitive()) {
+            return switch (dslType.name()) {
+                case "Int" -> ClassName.get(Integer.class);
+                case "String" -> ClassName.get(String.class);
+                case "Boolean" -> ClassName.get(Boolean.class);
+                case "Float" -> ClassName.get(Float.class);
+                case "BigInt" -> ClassName.get(BigDecimal.class);
+                case "DateTime" -> ClassName.get(LocalDateTime.class);
+                case "Date" -> ClassName.get(LocalDate.class);
+                case "Time" -> ClassName.get(LocalTime.class);
+                case "Binary" -> ClassName.get(byte[].class);
+                default -> throw new IllegalArgumentException("Unsupported primitive type: " + dslType.name());
+            };
+        }
+        return ClassName.get(packageName, dslType.name());
     }
 }

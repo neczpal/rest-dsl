@@ -169,6 +169,12 @@ primitiveType
     : STRING_TYPE
     | INT_TYPE
     | BOOLEAN_TYPE
+    | DATETIME_TYPE
+    | DATE_TYPE
+    | TIME_TYPE
+    | FLOAT_TYPE
+    | BIGINT_TYPE
+    | BINARY_TYPE
     ;
 
 separator
@@ -217,6 +223,12 @@ CONNECT : 'connect' ;
 STRING_TYPE   : 'String';
 INT_TYPE      : 'Int';
 BOOLEAN_TYPE  : 'Boolean';
+DATETIME_TYPE : 'DateTime';
+DATE_TYPE     : 'Date';
+TIME_TYPE     : 'Time';
+FLOAT_TYPE    : 'Float';
+BIGINT_TYPE   : 'BigInt';
+BINARY_TYPE   : 'Binary';
 
 // Identifiers
 CAPITAL_ID: [A-Z][a-zA-Z0-9_]*;

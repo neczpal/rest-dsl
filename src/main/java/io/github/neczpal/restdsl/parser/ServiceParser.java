@@ -4,6 +4,7 @@ import io.github.neczpal.restdsl.RestDSLParser;
 import io.github.neczpal.restdsl.model.Field;
 import io.github.neczpal.restdsl.model.Method;
 import io.github.neczpal.restdsl.model.Service;
+import io.github.neczpal.restdsl.model.Type;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static io.github.neczpal.restdsl.parser.ModelParser.parseType;
 
 public class ServiceParser {
     public List<Service> parse(RestDSLParser.PathsDefinitionContext ctx) {
@@ -77,14 +80,14 @@ public class ServiceParser {
         String verb = ctx.httpMethod().getText();
         String name = ctx.anyId() != null ? ctx.anyId().getText() : generateMethodName(verb, currentPath);
         
-        String bodyType = null;
+        Type bodyType = null;
         List<Field> queryParams = new ArrayList<>();
         List<Field> pathParams = new ArrayList<>();
         
         if (ctx.endpointParams() != null) {
             for (RestDSLParser.ParamContext param : ctx.endpointParams().param()) {
                 String pName = param.anyId().getText();
-                String pType = param.type().getText();
+                Type pType = parseType(param.type());
                 if (pName.equals("body")) {
                     bodyType = pType;
                 } else if (currentPath.contains("{" + pName + "}")) {
@@ -100,28 +103,28 @@ public class ServiceParser {
             String pName = matcher.group(1);
             boolean exists = pathParams.stream().anyMatch(p -> p.name().equals(pName));
             if (!exists) {
-                pathParams.add(Field.builder().name(pName).type("Int").build()); // default type if missing
+                pathParams.add(Field.builder().name(pName).type(Type.builder().name("Int").isPrimitive(true).build()).build()); // default type if missing
             }
         }
 
-        Map<Integer, String> responses = new HashMap<>();
+        Map<Integer, Type> responses = new HashMap<>();
         if (ctx.endpointSignature() != null) {
             if (ctx.endpointSignature().inlineSignature() != null) {
                 RestDSLParser.InlineSignatureContext sig = ctx.endpointSignature().inlineSignature();
                 if (sig.responseType() != null) {
                     if (sig.responseType().INT() != null) {
-                        responses.put(Integer.parseInt(sig.responseType().getText()), "Void");
+                        responses.put(Integer.parseInt(sig.responseType().getText()), Type.builder().name("Void").build());
                     } else {
-                        responses.put(200, sig.responseType().getText());
+                        responses.put(200, parseType(sig.responseType().type()));
                     }
                 }
                 if (sig.inlineErrorDef() != null) {
                     if (sig.inlineErrorDef().INT() != null) {
-                        responses.put(Integer.parseInt(sig.inlineErrorDef().INT().getText()), "Void");
+                        responses.put(Integer.parseInt(sig.inlineErrorDef().INT().getText()), Type.builder().name("Void").build());
                     } else {
                         for (RestDSLParser.ErrorMappingContext map : sig.inlineErrorDef().errorMapping()) {
                             int code = Integer.parseInt(map.INT().getText());
-                            String t = map.type() != null ? map.type().getText() : "Void";
+                            Type t = map.type() != null ? parseType(map.type()) : Type.builder().name("Void").build();
                             responses.put(code, t);
                         }
                     }
@@ -131,19 +134,19 @@ public class ServiceParser {
                     if (blockElem.responseBlock() != null) {
                         for (RestDSLParser.ErrorMappingContext map : blockElem.responseBlock().errorMapping()) {
                             int code = Integer.parseInt(map.INT().getText());
-                            String t = map.type() != null ? map.type().getText() : "Void";
+                            Type t = map.type() != null ? parseType(map.type()) : Type.builder().name("Void").build();
                             responses.put(code, t);
                         }
                     } else if (blockElem.errorsBlock() != null) {
                         for (RestDSLParser.ErrorDetailContext detail : blockElem.errorsBlock().errorDetail()) {
                             int code = Integer.parseInt(detail.INT().getText());
-                            String t = "Void";
+                            Type t = Type.builder().name("Void").build();
                             if (detail.type() != null) {
-                                t = detail.type().getText();
+                                t = parseType(detail.type());
                             } else if (detail.errorDetailBlock() != null) {
                                 for (RestDSLParser.FieldContext field : detail.errorDetailBlock().field()) {
                                     if (field.anyId().getText().equals("body")) {
-                                        t = field.type().getText();
+                                        t = parseType(field.type());
                                     }
                                 }
                             }

@@ -4,6 +4,7 @@ import io.github.neczpal.restdsl.RestDSLParser;
 import io.github.neczpal.restdsl.model.Field;
 import io.github.neczpal.restdsl.model.Model;
 import io.github.neczpal.restdsl.model.Trait;
+import io.github.neczpal.restdsl.model.Type;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,7 +54,7 @@ public class ModelParser {
             for (RestDSLParser.ModelFieldContext modelFieldCtx : modelCtx.modelBlock().modelField()) {
                 if (modelFieldCtx.field() != null) {
                     String fieldName = modelFieldCtx.field().anyId().getText();
-                    String fieldType = modelFieldCtx.field().type().getText();
+                    Type fieldType = parseType(modelFieldCtx.field().type());
                     fields.add(Field.builder().name(fieldName).type(fieldType).build());
                 } else {
                     String traitName = modelFieldCtx.CAPITAL_ID().getText();
@@ -72,5 +73,16 @@ public class ModelParser {
                 .build();
         parsedModels.put(name, model);
         return model;
+    }
+
+    public static Type parseType(RestDSLParser.TypeContext typeContext) {
+        if (typeContext.primitiveType() != null) {
+            return Type.builder().name(typeContext.primitiveType().getText()).isPrimitive(true).build();
+        } else if (typeContext.CAPITAL_ID() != null) {
+            return Type.builder().name(typeContext.CAPITAL_ID().getText()).build();
+        } else if (typeContext.type() != null) {
+            return Type.builder().isArray(true).elementType(parseType(typeContext.type())).build();
+        }
+        throw new IllegalArgumentException("Unsupported type: " + typeContext.getText());
     }
 }

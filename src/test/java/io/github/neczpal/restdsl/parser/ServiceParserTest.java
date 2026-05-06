@@ -41,16 +41,16 @@ public class ServiceParserTest {
 
         List<Service> services = new ServiceParser().parse(pathsDefinition);
         assertEquals(1, services.size());
-        Service service = services.get(0);
+        Service service = services.getFirst();
         assertEquals("Pet", service.name());
         assertEquals("/pet", service.base());
         assertEquals(1, service.methods().size());
         assertEquals("addPet", service.methods().getFirst().name());
         assertEquals("post", service.methods().getFirst().verb());
-        assertEquals("Pet", service.methods().getFirst().bodyType());
+        assertEquals("Pet", service.methods().getFirst().bodyType().name());
         assertEquals(2, service.methods().getFirst().responses().size());
-        assertEquals("Pet", service.methods().getFirst().responses().get(200));
-        assertEquals("ApiResponse", service.methods().getFirst().responses().get(405));
+        assertEquals("Pet", service.methods().getFirst().responses().get(200).name());
+        assertEquals("ApiResponse", service.methods().getFirst().responses().get(405).name());
     }
 
     @Test
@@ -63,18 +63,18 @@ public class ServiceParserTest {
                                 response { 200 -> Pet }
                                 error { 405 -> ApiResponse }
                             }
-
+        
                             put updatePet(body: Pet) {
                                 response { 200 -> Pet }
-                                error { 
-                                    400 -> ApiResponse 
-                                    404 -> ApiResponse 
+                                error {
+                                    400 -> ApiResponse
+                                    404 -> ApiResponse
                                 }
                             }
                         }
                     }
                 }
-        """;
+                """;
 
         RestDSLLexer lexer = new RestDSLLexer(CharStreams.fromString(input));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -89,24 +89,24 @@ public class ServiceParserTest {
 
         List<Service> services = new ServiceParser().parse(pathsDefinition);
         assertEquals(1, services.size());
-        Service service = services.get(0);
+        Service service = services.getFirst();
         assertEquals("Pet", service.name());
         assertEquals("/pet", service.base());
         assertEquals(2, service.methods().size());
 
         assertEquals("addPet", service.methods().getFirst().name());
         assertEquals("post", service.methods().getFirst().verb());
-        assertEquals("Pet", service.methods().getFirst().bodyType());
+        assertEquals("Pet", service.methods().getFirst().bodyType().name());
         assertEquals(2, service.methods().getFirst().responses().size());
-        assertEquals("Pet", service.methods().getFirst().responses().get(200));
-        assertEquals("ApiResponse", service.methods().getFirst().responses().get(405));
+        assertEquals("Pet", service.methods().getFirst().responses().get(200).name());
+        assertEquals("ApiResponse", service.methods().getFirst().responses().get(405).name());
 
         assertEquals("updatePet", service.methods().get(1).name());
         assertEquals("put", service.methods().get(1).verb());
-        assertEquals("Pet", service.methods().get(1).bodyType());
+        assertEquals("Pet", service.methods().get(1).bodyType().name());
         assertEquals(3, service.methods().get(1).responses().size());
-        assertEquals("Pet", service.methods().get(1).responses().get(200));
-        assertEquals("ApiResponse", service.methods().get(1).responses().get(400));
-        assertEquals("ApiResponse", service.methods().get(1).responses().get(404));
+        assertEquals("Pet", service.methods().get(1).responses().get(200).name());
+        assertEquals("ApiResponse", service.methods().get(1).responses().get(400).name());
+        assertEquals("ApiResponse", service.methods().get(1).responses().get(404).name());
     }
 }

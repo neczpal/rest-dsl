@@ -3,11 +3,14 @@ package io.github.neczpal.restdsl.parser;
 import io.github.neczpal.restdsl.RestDSLParser;
 import io.github.neczpal.restdsl.model.Field;
 import io.github.neczpal.restdsl.model.Trait;
+import io.github.neczpal.restdsl.model.Type;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static io.github.neczpal.restdsl.parser.ModelParser.parseType;
 
 public class TraitParser {
     public List<Trait> parse(RestDSLParser.TraitsDefinitionContext ctx) {
@@ -38,7 +41,7 @@ public class TraitParser {
             for (RestDSLParser.TraitFieldContext traitFieldCtx : traitCtx.traitBlock().traitField()) {
                 if (traitFieldCtx.field() != null) {
                     String fieldName = traitFieldCtx.field().anyId().getText();
-                    String fieldType = traitFieldCtx.field().type().getText();
+                    Type fieldType = parseType(traitFieldCtx.field().type());
                     fields.add(Field.builder().name(fieldName).type(fieldType).build());
                 } else {
                     String traitName = traitFieldCtx.CAPITAL_ID().getText();

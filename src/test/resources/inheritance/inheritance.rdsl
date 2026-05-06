@@ -7,13 +7,13 @@ api Inheritance {
 
     traits {
         Auditable {
-            createdAt: String // TODO DateTime
-            updatedAt: String // TODO DateTime
+            createdAt: DateTime
+            updatedAt: DateTime
         }
 
         SoftDeletable {
             isDeleted: Boolean
-            deletedAt: String // TODO DateTime
+            deletedAt: DateTime
         }
 
         Addressable {
@@ -32,7 +32,7 @@ api Inheritance {
         Approvable {
             isApproved: Boolean
             approvedBy: Int // Reference to a User ID
-            approvedAt: String // TODO DateTime
+            approvedAt: DateTime
         }
     }
 

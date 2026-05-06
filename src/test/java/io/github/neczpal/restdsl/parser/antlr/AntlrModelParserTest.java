@@ -63,7 +63,7 @@ public class AntlrModelParserTest {
                         }
                     }
                 }
-        """;
+                """;
 
         RestDSLLexer lexer = new RestDSLLexer(CharStreams.fromString(input));
         CommonTokenStream tokens = new CommonTokenStream(lexer);

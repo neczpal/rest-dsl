@@ -3,6 +3,7 @@ package io.github.neczpal.restdsl.generator.openapi;
 import io.github.neczpal.restdsl.model.Field;
 import io.github.neczpal.restdsl.model.Model;
 import io.github.neczpal.restdsl.model.Trait;
+import io.github.neczpal.restdsl.model.Type;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.OpenAPI;
 import org.junit.jupiter.api.Test;
@@ -21,8 +22,8 @@ public class ModelGeneratorTest {
         Model model = Model.builder()
                 .name("User")
                 .fields(Arrays.asList(
-                        Field.builder().name("id").type("Int").build(),
-                        Field.builder().name("name").type("String").build()
+                        Field.builder().name("id").type(Type.builder().name("Int").isPrimitive(true).build()).build(),
+                        Field.builder().name("name").type(Type.builder().name("String").isPrimitive(true).build()).build()
                 ))
                 .build();
         ModelGenerator generator = new ModelGenerator();
@@ -39,6 +40,7 @@ public class ModelGeneratorTest {
                       properties:
                         id:
                           type: integer
+                          format: int32
                         name:
                           type: string
                 """;
@@ -50,21 +52,21 @@ public class ModelGeneratorTest {
         Model userModel = Model.builder()
                 .name("User")
                 .fields(Collections.singletonList(
-                        Field.builder().name("id").type("Int").build()
+                        Field.builder().name("id").type(Type.builder().name("Int").isPrimitive(true).build()).build()
                 ))
                 .build();
         Model indModel = Model.builder()
                 .name("Individual")
                 .parent(userModel)
                 .fields(Collections.singletonList(
-                        Field.builder().name("name").type("String").build()
+                        Field.builder().name("name").type(Type.builder().name("String").isPrimitive(true).build()).build()
                 ))
                 .build();
         Model compModel = Model.builder()
                 .name("Company")
                 .parent(userModel)
                 .fields(Collections.singletonList(
-                        Field.builder().name("registrationNumber").type("String").build()
+                        Field.builder().name("registrationNumber").type(Type.builder().name("String").isPrimitive(true).build()).build()
                 ))
                 .build();
 
@@ -82,6 +84,7 @@ public class ModelGeneratorTest {
                       properties:
                         id:
                           type: integer
+                          format: int32
                       discriminator:
                         propertyName: _type
                         mapping:
@@ -110,15 +113,15 @@ public class ModelGeneratorTest {
         Trait auditable = Trait.builder()
                 .name("Auditable")
                 .fields(Arrays.asList(
-                        Field.builder().name("createdAt").type("String").build(),
-                        Field.builder().name("updatedAt").type("String").build()
+                        Field.builder().name("createdAt").type(Type.builder().name("String").isPrimitive(true).build()).build(),
+                        Field.builder().name("updatedAt").type(Type.builder().name("String").isPrimitive(true).build()).build()
                 ))
                 .build();
         Model documentModel = Model.builder()
                 .name("Document")
                 .traits(Collections.singletonList(auditable))
                 .fields(Collections.singletonList(
-                        Field.builder().name("docId").type("String").build()
+                        Field.builder().name("docId").type(Type.builder().name("String").isPrimitive(true).build()).build()
                 ))
                 .build();
 

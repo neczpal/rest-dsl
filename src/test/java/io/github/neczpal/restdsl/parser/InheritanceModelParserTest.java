@@ -39,7 +39,7 @@ public class InheritanceModelParserTest {
                         }
                     }
                 }
-        """;
+                """;
 
         RestDSLLexer lexer = new RestDSLLexer(CharStreams.fromString(input));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -62,9 +62,9 @@ public class InheritanceModelParserTest {
         assertNull(user.parent());
         assertEquals(2, user.fields().size());
         assertEquals("phone", user.fields().get(0).name());
-        assertEquals("String", user.fields().get(0).type());
+        assertEquals("String", user.fields().get(0).type().name());
         assertEquals("email", user.fields().get(1).name());
-        assertEquals("String", user.fields().get(1).type());
+        assertEquals("String", user.fields().get(1).type().name());
 
         Model individual = modelsMap.get("Individual");
         assertEquals("Individual", individual.name());
@@ -72,11 +72,11 @@ public class InheritanceModelParserTest {
         assertEquals("User", individual.parent().name());
         assertEquals(3, individual.fields().size());
         assertEquals("title", individual.fields().get(0).name());
-        assertEquals("String", individual.fields().get(0).type());
+        assertEquals("String", individual.fields().get(0).type().name());
         assertEquals("firstName", individual.fields().get(1).name());
-        assertEquals("String", individual.fields().get(1).type());
+        assertEquals("String", individual.fields().get(1).type().name());
         assertEquals("lastName", individual.fields().get(2).name());
-        assertEquals("String", individual.fields().get(2).type());
+        assertEquals("String", individual.fields().get(2).type().name());
 
         Model company = modelsMap.get("Company");
         assertEquals("Company", company.name());
@@ -84,8 +84,8 @@ public class InheritanceModelParserTest {
         assertEquals("User", company.parent().name());
         assertEquals(2, company.fields().size());
         assertEquals("companyName", company.fields().get(0).name());
-        assertEquals("String", company.fields().get(0).type());
+        assertEquals("String", company.fields().get(0).type().name());
         assertEquals("companyType", company.fields().get(1).name());
-        assertEquals("String", company.fields().get(1).type());
+        assertEquals("String", company.fields().get(1).type().name());
     }
 }

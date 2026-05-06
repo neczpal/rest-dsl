@@ -27,12 +27,12 @@ public class ModelParserTest {
                         Person {
                             id: Int
                             name: String
-                            height: Double
+                            height: Float
                             isDead: Boolean
                         }
                     }
                 }
-        """;
+                """;
 
         RestDSLLexer lexer = new RestDSLLexer(CharStreams.fromString(input));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -52,13 +52,13 @@ public class ModelParserTest {
         assertNull(model.parent());
         assertEquals(4, model.fields().size());
         assertEquals("id", model.fields().get(0).name());
-        assertEquals("Int", model.fields().get(0).type());
+        assertEquals("Int", model.fields().get(0).type().name());
         assertEquals("name", model.fields().get(1).name());
-        assertEquals("String", model.fields().get(1).type());
+        assertEquals("String", model.fields().get(1).type().name());
         assertEquals("height", model.fields().get(2).name());
-        assertEquals("Double", model.fields().get(2).type());
+        assertEquals("Float", model.fields().get(2).type().name());
         assertEquals("isDead", model.fields().get(3).name());
-        assertEquals("Boolean", model.fields().get(3).type());
+        assertEquals("Boolean", model.fields().get(3).type().name());
     }
 
     @Test
@@ -96,7 +96,7 @@ public class ModelParserTest {
         assertNull(user.parent());
         assertEquals(1, user.fields().size());
         assertEquals("id", user.fields().getFirst().name());
-        assertEquals("Int", user.fields().getFirst().type());
+        assertEquals("Int", user.fields().getFirst().type().name());
 
         Model ind = modelsMap.get("Individual");
         assertEquals("Individual", ind.name());
@@ -104,6 +104,6 @@ public class ModelParserTest {
         assertEquals("User", ind.parent().name());
         assertEquals(1, ind.fields().size());
         assertEquals("name", ind.fields().getFirst().name());
-        assertEquals("String", ind.fields().getFirst().type());
+        assertEquals("String", ind.fields().getFirst().type().name());
     }
 }

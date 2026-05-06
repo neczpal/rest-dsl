@@ -7,6 +7,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AntlrServiceParserTest {
 
@@ -20,7 +21,7 @@ public class AntlrServiceParserTest {
                         }
                     }
                 }
-        """;
+                """;
 
         RestDSLLexer lexer = new RestDSLLexer(CharStreams.fromString(input));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -35,7 +36,8 @@ public class AntlrServiceParserTest {
                 pathsContext = elem.pathsDefinition();
             }
         }
-        
+
+        assertNotNull(pathsContext);
         assertEquals(1, pathsContext.pathElement().size());
         RestDSLParser.PathDefinitionContext pathContext = pathsContext.pathElement(0).pathDefinition();
         assertEquals("/pet", pathContext.PATH_ID().getText());

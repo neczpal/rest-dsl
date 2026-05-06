@@ -6,6 +6,7 @@ import io.github.neczpal.restdsl.model.Method;
 import io.github.neczpal.restdsl.model.Model;
 import io.github.neczpal.restdsl.model.RestDsl;
 import io.github.neczpal.restdsl.model.Service;
+import io.github.neczpal.restdsl.model.Type;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -27,8 +28,8 @@ public class OpenMetaInfoGeneratorTest {
         Model model = Model.builder()
                 .name("User")
                 .fields(Arrays.asList(
-                        Field.builder().name("id").type("Int").build(),
-                        Field.builder().name("name").type("String").build()
+                        Field.builder().name("id").type(Type.builder().name("Int").isPrimitive(true).build()).build(),
+                        Field.builder().name("name").type(Type.builder().name("String").isPrimitive(true).build()).build()
                 ))
                 .build();
         Method method = Method.builder()
@@ -74,6 +75,7 @@ public class OpenMetaInfoGeneratorTest {
                       properties:
                         id:
                           type: integer
+                          format: int32
                         name:
                           type: string
                 """;

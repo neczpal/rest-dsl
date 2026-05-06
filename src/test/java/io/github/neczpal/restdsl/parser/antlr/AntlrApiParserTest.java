@@ -19,7 +19,7 @@ public class AntlrApiParserTest {
                         basePath: "/api/v3"
                     }
                 }
-        """;
+                """;
 
         RestDSLLexer lexer = new RestDSLLexer(CharStreams.fromString(input));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
