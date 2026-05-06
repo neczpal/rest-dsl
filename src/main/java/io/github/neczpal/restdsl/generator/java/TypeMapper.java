@@ -5,7 +5,6 @@ import com.palantir.javapoet.ParameterizedTypeName;
 import com.palantir.javapoet.TypeName;
 import io.github.neczpal.restdsl.model.Type;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -31,7 +30,7 @@ public class TypeMapper {
                 case "String" -> ClassName.get(String.class);
                 case "Boolean" -> ClassName.get(Boolean.class);
                 case "Float" -> ClassName.get(Float.class);
-                case "BigInt" -> ClassName.get(BigDecimal.class);
+                case "Long" -> ClassName.get(Long.class);
                 case "DateTime" -> ClassName.get(LocalDateTime.class);
                 case "Date" -> ClassName.get(LocalDate.class);
                 case "Time" -> ClassName.get(LocalTime.class);

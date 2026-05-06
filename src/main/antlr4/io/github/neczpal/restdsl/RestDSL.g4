@@ -173,7 +173,7 @@ primitiveType
     | DATE_TYPE
     | TIME_TYPE
     | FLOAT_TYPE
-    | BIGINT_TYPE
+    | LONG_TYPE
     | BINARY_TYPE
     ;
 
@@ -227,7 +227,7 @@ DATETIME_TYPE : 'DateTime';
 DATE_TYPE     : 'Date';
 TIME_TYPE     : 'Time';
 FLOAT_TYPE    : 'Float';
-BIGINT_TYPE   : 'BigInt';
+LONG_TYPE     : 'Long';
 BINARY_TYPE   : 'Binary';
 
 // Identifiers

@@ -14,7 +14,7 @@ public class TypeMapper {
                 case "String" -> new Schema<String>().type("string");
                 case "Int" -> new Schema<Integer>().type("integer").format("int32");
                 case "Float" -> new Schema<Number>().type("number").format("float");
-                case "BigInt" -> new Schema<Long>().type("integer").format("int64");
+                case "Long" -> new Schema<Long>().type("integer").format("int64");
                 case "Boolean" -> new Schema<Boolean>().type("boolean");
                 case "DateTime" -> new Schema<String>().type("string").format("date-time");
                 case "Date" -> new Schema<String>().type("string").format("date");

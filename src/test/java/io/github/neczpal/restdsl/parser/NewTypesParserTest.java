@@ -33,7 +33,7 @@ public class NewTypesParserTest {
                             date: Date
                             time: Time
                             float: Float
-                            bigInt: BigInt
+                            long: Long
                             binary: Binary
                         }
                     }
@@ -72,8 +72,8 @@ public class NewTypesParserTest {
         assertEquals("Time", newTypes.fields().get(2).type().name());
         assertEquals("float", newTypes.fields().get(3).name());
         assertEquals("Float", newTypes.fields().get(3).type().name());
-        assertEquals("bigInt", newTypes.fields().get(4).name());
-        assertEquals("BigInt", newTypes.fields().get(4).type().name());
+        assertEquals("long", newTypes.fields().get(4).name());
+        assertEquals("Long", newTypes.fields().get(4).type().name());
         assertEquals("binary", newTypes.fields().get(5).name());
         assertEquals("Binary", newTypes.fields().get(5).type().name());
     }
