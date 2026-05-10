@@ -1,0 +1,8 @@
+import java.io.File;
+
+File file = new File(basedir, "target/generated-sources/rest-dsl/openapi.yaml");
+if (!file.exists()) {
+    throw new Exception("Generated file target/generated-sources/rest-dsl/openapi.yaml is missing.");
+}
+
+return true;
