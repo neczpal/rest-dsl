@@ -51,11 +51,16 @@ public class ApiGenerator {
 
         FieldSpec restClientField = FieldSpec.builder(RestClient.class, "restClient", Modifier.PRIVATE, Modifier.FINAL).build();
 
-        MethodSpec constructor = MethodSpec.constructorBuilder()
+        MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
-                .addParameter(String.class, "baseUrl")
-                .addStatement("this.restClient = RestClient.builder().baseUrl(baseUrl).build()")
-                .build();
+                .addParameter(String.class, "serverUrl");
+
+        if (service.base() != null && !service.base().isEmpty()) {
+            constructorBuilder.addStatement("this.restClient = RestClient.builder().baseUrl(serverUrl + $S).build()", service.base());
+        } else {
+            constructorBuilder.addStatement("this.restClient = RestClient.builder().baseUrl(serverUrl).build()");
+        }
+        MethodSpec constructor = constructorBuilder.build();
 
         TypeSpec.Builder clientBuilder = TypeSpec.classBuilder(clientName)
                 .addModifiers(Modifier.PUBLIC)
